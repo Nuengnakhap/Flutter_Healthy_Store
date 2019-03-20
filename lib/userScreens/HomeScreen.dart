@@ -9,7 +9,7 @@ import 'profile.dart';
 import 'delivery.dart';
 import 'about.dart';
 import '../tools/Store.dart';
-import 'item_details.dart';
+import 'item_detail.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -80,6 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemImage: storeItems[index].itemImage,
                               itemPrice: storeItems[index].itemPrice,
                               itemRating: storeItems[index].itemRating,
+                              itemDesc: storeItems[index].itemDesc,
+                              sizeList: storeItems[index].sizeList,
                             );
                           },
                         ),
