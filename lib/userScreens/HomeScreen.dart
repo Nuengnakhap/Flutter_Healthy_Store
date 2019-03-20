@@ -9,6 +9,7 @@ import 'profile.dart';
 import 'delivery.dart';
 import 'about.dart';
 import '../tools/Store.dart';
+import 'item_details.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -69,89 +70,105 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisCount: 2),
                 itemCount: storeItems.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: Stack(
-                      alignment: FractionalOffset.topLeft,
-                      children: <Widget>[
-                        Stack(
-                          alignment: FractionalOffset.bottomCenter,
-                          children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.fitWidth,
-                                    image: NetworkImage(
-                                        storeItems[index].itemImage)),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return ItemDetail(
+                              itemName: storeItems[index].itemName,
+                              itemImage: storeItems[index].itemImage,
+                              itemPrice: storeItems[index].itemPrice,
+                              itemRating: storeItems[index].itemRating,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Card(
+                      child: Stack(
+                        alignment: FractionalOffset.topLeft,
+                        children: <Widget>[
+                          Stack(
+                            alignment: FractionalOffset.bottomCenter,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.fitWidth,
+                                      image: NetworkImage(
+                                          storeItems[index].itemImage)),
+                                ),
                               ),
-                            ),
-                            Container(
-                              height: 35.0,
-                              color: Colors.black.withAlpha(100),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                              Container(
+                                height: 35.0,
+                                color: Colors.black.withAlpha(100),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        "${storeItems[index].itemName.substring(0, 4)}...",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16.0,
+                                            color: Colors.white),
+                                      ),
+                                      Text(
+                                        "${storeItems[index].itemPrice} Baht",
+                                        style: TextStyle(
+                                            color: Colors.red[500],
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Container(
+                                height: 30.0,
+                                width: 60.0,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(5.0),
+                                    bottomRight: Radius.circular(5.0),
+                                  ),
+                                ),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceEvenly,
                                   children: <Widget>[
-                                    Text(
-                                      "${storeItems[index].itemName.substring(0, 12)}...",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16.0,
-                                          color: Colors.white),
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.blue,
+                                      size: 20.0,
                                     ),
                                     Text(
-                                      "${storeItems[index].itemPrice} Baht",
-                                      style: TextStyle(
-                                          color: Colors.red[500],
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 16.0),
-                                    ),
+                                      "${storeItems[index].itemRating}",
+                                      style: TextStyle(color: Colors.white),
+                                    )
                                   ],
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Container(
-                              height: 30.0,
-                              width: 60.0,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(5.0),
-                                  bottomRight: Radius.circular(5.0),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.blue,
                                 ),
+                                onPressed: () {},
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.blue,
-                                    size: 20.0,
-                                  ),
-                                  Text(
-                                    "${storeItems[index].itemRating}",
-                                    style: TextStyle(color: Colors.white),
-                                  )
-                                ],
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.favorite_border,
-                                color: Colors.blue,
-                              ),
-                              onPressed: () {},
-                            ),
-                          ],
-                        )
-                      ],
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },
