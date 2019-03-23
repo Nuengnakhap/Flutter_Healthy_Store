@@ -8,8 +8,9 @@ import 'history.dart';
 import 'profile.dart';
 import 'delivery.dart';
 import 'about.dart';
+import 'login.dart';
 import '../tools/Store.dart';
-import 'item_detail.dart';
+import 'item_details.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -302,7 +303,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   size: 20.0,
                 ),
               ),
-              title: Text('Logout'),
+              title: Text('Login'),
+              onTap: () {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (BuildContext context) {
+                  return Login();
+                }));
+              },
             ),
           ],
         ),

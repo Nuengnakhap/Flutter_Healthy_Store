@@ -7,14 +7,45 @@ class ItemDetail extends StatefulWidget {
   double itemPrice;
   String itemImage;
   double itemRating;
+  String itemDesc;
+  List<String> sizeList;
 
-  ItemDetail({this.itemName, this.itemPrice, this.itemImage, this.itemRating});
+  ItemDetail({
+    this.itemName,
+    this.itemPrice,
+    this.itemImage,
+    this.itemRating,
+    this.itemDesc,
+    this.sizeList,
+  });
 
   @override
   _ItemDetailState createState() => _ItemDetailState();
 }
 
 class _ItemDetailState extends State<ItemDetail> {
+  bool isExpanded = false;
+  int currentSizeIndex = 0;
+  int _counter = 1;
+
+  void _increase() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  void _decrease() {
+    setState(() {
+      if (_counter > 1) _counter--;
+    });
+  }
+
+  void _expand() {
+    setState(() {
+      isExpanded ? isExpanded = false : isExpanded = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
@@ -166,10 +197,34 @@ class _ItemDetailState extends State<ItemDetail> {
                         SizedBox(
                           height: 10.0,
                         ),
-                        Text(
-                          "My item full information",
-                          style: TextStyle(
-                              fontSize: 14.0, fontWeight: FontWeight.w400),
+                        Padding(
+                          padding: EdgeInsets.only(),
+                          child: AnimatedCrossFade(
+                            firstChild: Text(
+                              widget.itemDesc,
+                              maxLines: 2,
+                            ),
+                            secondChild: Text(
+                              widget.itemDesc,
+                            ),
+                            crossFadeState: isExpanded
+                                ? CrossFadeState.showSecond
+                                : CrossFadeState.showFirst,
+                            duration: kThemeAnimationDuration,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(),
+                          child: GestureDetector(
+                            onTap: _expand,
+                            child: Text(
+                              isExpanded ? "less" : "more...",
+                              style: TextStyle(
+                                color: Color(0xFFFB382F),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                         ),
                         SizedBox(
                           height: 10.0,
@@ -189,31 +244,6 @@ class _ItemDetailState extends State<ItemDetail> {
                           height: 10.0,
                         ),
                         Text(
-                          "Colors",
-                          style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w700),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        SizedBox(
-                          height: 50.0,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 4,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ChoiceChip(
-                                    label: Text("Color"), selected: false),
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
                           "Sizes",
                           style: TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.w700),
@@ -225,12 +255,20 @@ class _ItemDetailState extends State<ItemDetail> {
                           height: 50.0,
                           child: ListView.builder(
                             scrollDirection: Axis.horizontal,
-                            itemCount: 4,
+                            itemCount: widget.sizeList.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: ChoiceChip(
-                                    label: Text("Sizes"), selected: false),
+                                  label: Text("${widget.sizeList[index]}"),
+                                  selected: currentSizeIndex == index,
+                                  onSelected: (bool selected) {
+                                    setState(() {
+                                      currentSizeIndex =
+                                          selected ? index : null;
+                                    });
+                                  },
+                                ),
                               );
                             },
                           ),
@@ -239,7 +277,7 @@ class _ItemDetailState extends State<ItemDetail> {
                           height: 10.0,
                         ),
                         Text(
-                          "No.",
+                          "Quantity",
                           style: TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.w700),
                         ),
@@ -252,7 +290,7 @@ class _ItemDetailState extends State<ItemDetail> {
                             CircleAvatar(
                               child: Icon(Icons.remove),
                             ),
-                            Text("0"),
+                            Text(_counter.toString()),
                             CircleAvatar(
                               child: Icon(Icons.add),
                             ),

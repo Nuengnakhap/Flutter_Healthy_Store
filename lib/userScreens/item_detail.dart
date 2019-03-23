@@ -56,25 +56,27 @@ class _ItemDetailState extends State<ItemDetail> {
             ),
           ],
         ),
-        body: Column(
-          children: <Widget>[
-            ProductScreenTopPart(
-              itemName: widget.itemName,
-              itemImage: widget.itemImage,
-              itemPrice: widget.itemPrice,
-              itemRating: widget.itemRating,
-              itemDesc: widget.itemDesc,
-              sizeList: widget.sizeList,
-            ),
-            ProductScreenBottomPart(
-              itemName: widget.itemName,
-              itemImage: widget.itemImage,
-              itemPrice: widget.itemPrice,
-              itemRating: widget.itemRating,
-              itemDesc: widget.itemDesc,
-              sizeList: widget.sizeList,
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              ProductScreenTopPart(
+                itemName: widget.itemName,
+                itemImage: widget.itemImage,
+                itemPrice: widget.itemPrice,
+                itemRating: widget.itemRating,
+                itemDesc: widget.itemDesc,
+                sizeList: widget.sizeList,
+              ),
+              ProductScreenBottomPart(
+                itemName: widget.itemName,
+                itemImage: widget.itemImage,
+                itemPrice: widget.itemPrice,
+                itemRating: widget.itemRating,
+                itemDesc: widget.itemDesc,
+                sizeList: widget.sizeList,
+              ),
+            ],
+          ),
         ),
       ),
     );
