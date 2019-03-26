@@ -305,6 +305,29 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Text('Login'),
               onTap: () {
+                // Navigator.push(
+                //   context,
+                //   PageRouteBuilder(
+                //     pageBuilder: (BuildContext context,
+                //         Animation<double> animation,
+                //         Animation<double> secondaryAnimation) {
+                //       return Login();
+                //     },
+                //     transitionsBuilder: (BuildContext context,
+                //         Animation<double> animation,
+                //         Animation<double> secondaryAnimation,
+                //         Widget child) {
+                //       return SlideTransition(
+                //         position: Tween<Offset>(
+                //           begin: Offset(0.0, 1.0),
+                //           end: Offset(0.0, 0.0),
+                //         ).animate(animation),
+                //         child: child,
+                //       );
+                //     },
+                //     // transitionDuration: Duration(seconds: 3),
+                //   ),
+                // );
                 Navigator.of(context)
                     .push(CupertinoPageRoute(builder: (BuildContext context) {
                   return Login();

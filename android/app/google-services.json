@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "259070607541",
+    "firebase_url": "https://flutter-healthy-store-01.firebaseio.com",
+    "project_id": "flutter-healthy-store-01",
+    "storage_bucket": "flutter-healthy-store-01.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259070607541:android:da46325dd80839c0",
+        "android_client_info": {
+          "package_name": "com.example.store_app_proj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259070607541-cbp86br806jot5f9667akfo72dbm62si.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMM9FgfJyCnDRc81vQVXraaK7DLsqP1ZE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
