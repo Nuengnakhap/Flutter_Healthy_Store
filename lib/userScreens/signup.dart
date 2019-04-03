@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 import '../tools/app_tools.dart';
-import '../tools/progressdialog.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -14,12 +15,10 @@ class _SignUpState extends State<SignUp> {
   TextEditingController password = TextEditingController();
   TextEditingController re_password = TextEditingController();
   final scaffoldkey = GlobalKey<ScaffoldState>();
-  ProgressDialog pr;
+  AppMethods appMethod = FirebaseMethods();
 
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context,ProgressDialogType.Normal);
-    pr.setMessage('Please wait...');
     return Scaffold(
       key: scaffoldkey,
       backgroundColor: Theme.of(context).primaryColor,
@@ -117,6 +116,6 @@ class _SignUpState extends State<SignUp> {
       showSnackbar('Password don\'t match', scaffoldkey);
       return;
     }
-    pr.show();
+    displayProgressDialog(context);
   }
 }

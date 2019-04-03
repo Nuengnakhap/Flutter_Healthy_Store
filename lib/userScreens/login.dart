@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../tools/app_tools.dart';
-import '../tools/progressdialog.dart';
 import 'signup.dart';
+import '../tools/app_methods.dart';
+import '../tools/firebase_methods.dart';
+import '../tools/app_data.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -12,12 +14,11 @@ class _LoginState extends State<Login> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   final scaffoldkey = GlobalKey<ScaffoldState>();
-  ProgressDialog pr;
+
+  AppMethods appMethod = FirebaseMethods();
 
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context, ProgressDialogType.Normal);
-    pr.setMessage('Please wait...');
     return Scaffold(
       key: scaffoldkey,
       backgroundColor: Theme.of(context).primaryColor,
@@ -71,7 +72,7 @@ class _LoginState extends State<Login> {
     );
   }
 
-  verifyLogin() {
+  verifyLogin() async {
     if (email.text == '') {
       showSnackbar('Email cannot be empty', scaffoldkey);
       return;
@@ -80,6 +81,17 @@ class _LoginState extends State<Login> {
       showSnackbar('Password cannot be empty', scaffoldkey);
       return;
     }
-    pr.show();
+    displayProgressDialog(context);
+    
+    String response =
+        await appMethod.loginUser(email: email.text, password: password.text);
+    print(response);
+    if (response == successful) {
+      closeProgressDialog(context);
+      Navigator.pop(context);
+    } else {
+      closeProgressDialog(context);
+      showSnackbar(response, scaffoldkey);
+    }
   }
 }
