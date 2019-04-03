@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:store_app_proj/tools/app_tools.dart';
 import 'favorites.dart';
 import 'messages.dart';
 import 'cart.dart';
@@ -19,9 +20,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   BuildContext context;
+
+  Future openDB() async {
+    print(await DBProvider.db.getAllClients());
+    print('DB opened');
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
     this.context = context;
+    openDB();
     return Scaffold(
       appBar: AppBar(
         title: Text('Healthies'),

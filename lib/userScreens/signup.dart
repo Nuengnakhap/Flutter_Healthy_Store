@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import '../tools/app_tools.dart';
+import '../tools/app_data.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -91,7 +92,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  verifyDetails() {
+  verifyDetails() async {
     if (fullname.text == '') {
       showSnackbar('Full Name cannot be empty', scaffoldkey);
       return;
@@ -117,5 +118,17 @@ class _SignUpState extends State<SignUp> {
       return;
     }
     displayProgressDialog(context);
+    String response = await appMethod.createUserAccount(
+        fullname: fullname.text,
+        phone: phone.text,
+        email: email.text,
+        password: password.text);
+    if (response == successful) {
+      closeProgressDialog(context);
+      Navigator.pop(context);
+    } else {
+      closeProgressDialog(context);
+      showSnackbar(response, scaffoldkey);
+    }
   }
 }

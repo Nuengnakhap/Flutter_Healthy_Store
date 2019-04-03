@@ -195,8 +195,8 @@ class DBProvider {
   newClient(Client newClient) async {
     final db = await database;
     //get the biggest id in the table
-    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM Client");
-    int id = table.first["id"];
+    var table = await db.rawQuery("SELECT MAX($userID)+1 as $userID FROM Client");
+    int id = table.first["$userID"];
     //insert to the table using the new id
     var raw = await db.rawInsert(
         "INSERT Into Client ($userID,$acctFullName,$phoneNumber,$userEmail,$userPassword,$photoURL,$loggedIN)"
@@ -219,22 +219,25 @@ class DBProvider {
         id: client.id,
         fullName: client.fullName,
         phone: client.phone,
+        email: client.email,
+        password: client.password,
+        photo: client.photo,
         logged: !client.logged);
     var res = await db.update("Client", blocked.toMap(),
-        where: "id = ?", whereArgs: [client.id]);
+        where: "$userID = ?", whereArgs: [client.id]);
     return res;
   }
 
   updateClient(Client newClient) async {
     final db = await database;
     var res = await db.update("Client", newClient.toMap(),
-        where: "id = ?", whereArgs: [newClient.id]);
+        where: "$userID = ?", whereArgs: [newClient.id]);
     return res;
   }
 
   getClient(int id) async {
     final db = await database;
-    var res = await db.query("Client", where: "id = ?", whereArgs: [id]);
+    var res = await db.query("Client", where: "$userID = ?", whereArgs: [id]);
     return res.isNotEmpty ? Client.fromMap(res.first) : null;
   }
 
@@ -243,7 +246,7 @@ class DBProvider {
 
     print("works");
     // var res = await db.rawQuery("SELECT * FROM Client WHERE blocked=1");
-    var res = await db.query("Client", where: "blocked = ? ", whereArgs: [1]);
+    var res = await db.query("Client", where: "$loggedIN = ? ", whereArgs: [1]);
 
     List<Client> list =
         res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
@@ -260,7 +263,7 @@ class DBProvider {
 
   deleteClient(int id) async {
     final db = await database;
-    return db.delete("Client", where: "id = ?", whereArgs: [id]);
+    return db.delete("Client", where: "$userID = ?", whereArgs: [id]);
   }
 
   deleteAll() async {

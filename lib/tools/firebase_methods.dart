@@ -14,26 +14,30 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<String> createUserAccount(
       {String fullname, String phone, String email, String password}) async {
-    FirebaseUser user = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
-    if (user != null) {
-      await firestore.collection(usersData).document(user.uid).setData({
-        userID: user.uid,
-        acctFullName: fullname,
-        userEmail: email,
-        userPassword: password,
-        phoneNumber: phone
-      }).whenComplete(() {
+
+    FirebaseUser user;
+
+    try {
+      user = await auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      if (user != null) {
+        await firestore.collection(usersData).document(user.uid).setData({
+          userID: user.uid,
+          acctFullName: fullname,
+          userEmail: email,
+          userPassword: password,
+          phoneNumber: phone
+        });
         writeDataLocally(key: userID, value: user.uid);
         writeDataLocally(key: acctFullName, value: fullname);
         writeDataLocally(key: userEmail, value: email);
         writeDataLocally(key: userPassword, value: password);
         writeDataLocally(key: phoneNumber, value: phone);
-        return complete();
-      }).catchError(() {
-        return notComplete();
-      });
+      }
+    } on PlatformException catch (e) {
+      return errorMSG(e.message);
     }
+
     return user == null ? errorMSG('Error') : successfulMSG();
   }
 
