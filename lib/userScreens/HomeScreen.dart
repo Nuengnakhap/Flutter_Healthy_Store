@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:store_app_proj/tools/app_tools.dart';
@@ -29,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context){
     this.context = context;
-    openDB();
     return Scaffold(
       appBar: AppBar(
         title: Text('Healthies'),

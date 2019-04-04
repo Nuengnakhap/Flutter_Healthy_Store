@@ -14,7 +14,6 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<String> createUserAccount(
       {String fullname, String phone, String email, String password}) async {
-
     FirebaseUser user;
 
     try {
@@ -28,11 +27,21 @@ class FirebaseMethods implements AppMethods {
           userPassword: password,
           phoneNumber: phone
         });
-        writeDataLocally(key: userID, value: user.uid);
-        writeDataLocally(key: acctFullName, value: fullname);
-        writeDataLocally(key: userEmail, value: email);
-        writeDataLocally(key: userPassword, value: password);
-        writeDataLocally(key: phoneNumber, value: phone);
+        print('Test');
+        print(DBProvider.db.getAllClients().toString());
+        print(await DBProvider.db.newClient(Client(
+          fullName: fullname,
+          email: email,
+          password: password,
+          phone: phone,
+          logged: true,
+        )));
+        // print(await DBProvider.db.getAllClients());
+        // writeDataLocally(key: userID, value: user.uid);
+        // writeDataLocally(key: acctFullName, value: fullname);
+        // writeDataLocally(key: userEmail, value: email);
+        // writeDataLocally(key: userPassword, value: password);
+        // writeDataLocally(key: phoneNumber, value: phone);
       }
     } on PlatformException catch (e) {
       return errorMSG(e.message);

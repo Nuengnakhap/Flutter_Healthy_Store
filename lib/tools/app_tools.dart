@@ -181,7 +181,7 @@ class DBProvider {
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
       await db.execute("CREATE TABLE Client ("
-          "$userID INTEGER PRIMARY KEY,"
+          "$userID TEXT PRIMARY KEY,"
           "$acctFullName TEXT,"
           "$phoneNumber TEXT,"
           "$userEmail TEXT,"
@@ -268,6 +268,6 @@ class DBProvider {
 
   deleteAll() async {
     final db = await database;
-    db.rawDelete("Delete * from Client");
+    db.rawDelete("Delete from Client");
   }
 }
