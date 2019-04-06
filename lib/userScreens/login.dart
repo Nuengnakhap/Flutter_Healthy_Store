@@ -85,9 +85,9 @@ class _LoginState extends State<Login> {
     
     String response =
         await appMethod.loginUser(email: email.text, password: password.text);
-    print(response);
     if (response == successful) {
       closeProgressDialog(context);
+      Navigator.pop(context, true);
       Navigator.pop(context);
     } else {
       closeProgressDialog(context);

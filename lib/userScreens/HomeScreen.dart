@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:store_app_proj/tools/app_tools.dart';
+import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'favorites.dart';
 import 'messages.dart';
 import 'cart.dart';
@@ -23,13 +26,39 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   BuildContext context;
 
-  Future openDB() async {
-    print(await DBProvider.db.getAllClients());
-    print('DB opened');
+  Client _client;
+  String acctName = 'Guest';
+  String acctEmail = '';
+  String acctPhotoUrl = '';
+  bool isLoggedIn = false;
+
+  AppMethods appMethod = FirebaseMethods();
+
+  @override
+  void initState() {
+    super.initState();
+    _asyncMethod();
+  }
+
+  Future _asyncMethod() async {
+    _client = await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+        .getLasted();
+    if (_client != null) {
+      acctName = _client.fullName;
+      acctEmail = _client.email;
+      acctPhotoUrl = _client.photo;
+      isLoggedIn = _client.logged;
+    } else {
+      acctName = 'Guest';
+      acctEmail = '';
+      acctPhotoUrl = '';
+      isLoggedIn = false;
+    }
+    setState(() {});
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     this.context = context;
     return Scaffold(
       appBar: AppBar(
@@ -219,8 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person),
               ),
-              accountName: Text('Kitrawee'),
-              accountEmail: Text('60070005@kmitl.ac.th'),
+              accountName: Text(acctName.toString()),
+              accountEmail: Text(acctEmail.toString()),
             ),
             ListTile(
               leading: CircleAvatar(
@@ -312,8 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   size: 20.0,
                 ),
               ),
-              title: Text('Login'),
-              onTap: () {
+              title: isLoggedIn == true ? Text('Logout') : Text('Login'),
+              onTap: () async {
                 // Navigator.push(
                 //   context,
                 //   PageRouteBuilder(
@@ -337,15 +366,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 //     // transitionDuration: Duration(seconds: 3),
                 //   ),
                 // );
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Login();
-                }));
+                checkIfLoggedIn();
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  checkIfLoggedIn() async {
+    if (isLoggedIn == false) {
+      bool response = await Navigator.of(context)
+          .push(CupertinoPageRoute(builder: (BuildContext context) => Login()));
+      if (response == true) _asyncMethod();
+      return;
+    }
+    bool response = await appMethod.logoutUser();
+    if (response == true) _asyncMethod();
+    Navigator.pop(context);
   }
 }

@@ -125,7 +125,7 @@ class _SignUpState extends State<SignUp> {
         password: password.text);
     if (response == successful) {
       closeProgressDialog(context);
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } else {
       closeProgressDialog(context);
       showSnackbar(response, scaffoldkey);
