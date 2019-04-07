@@ -6,7 +6,7 @@ class ItemDetail extends StatefulWidget {
   String itemName;
   double itemPrice;
   String itemImage;
-  double itemRating;
+  String itemRating;
   String itemDesc;
   List<String> sizeList;
 

@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:store_app_proj/components/products.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
+import 'package:store_app_proj/tools/progressdialog.dart';
 import 'favorites.dart';
 import 'messages.dart';
 import 'cart.dart';
@@ -17,6 +19,8 @@ import 'about.dart';
 import 'login.dart';
 import '../tools/Store.dart';
 import 'item_details.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -55,6 +59,17 @@ class _HomeScreenState extends State<HomeScreen> {
       isLoggedIn = false;
     }
     setState(() {});
+  }
+
+  Future<List<Store>> loadData() async {
+    http.Response response = await http.get(
+        "http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25");
+    // http.Response response = await http.get(
+    //     "https://grocery.walmart.com/v4/api/products/search?storeId=1855&page=1&query=healthy");
+    Map<String, dynamic> data = json.decode(response.body);
+    var rest = data['items'] as List;
+    List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
+    return stores;
   }
 
   @override
@@ -100,123 +115,16 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Flexible(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemCount: storeItems.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return ItemDetail(
-                              itemName: storeItems[index].itemName,
-                              itemImage: storeItems[index].itemImage,
-                              itemPrice: storeItems[index].itemPrice,
-                              itemRating: storeItems[index].itemRating,
-                              itemDesc: storeItems[index].itemDesc,
-                              sizeList: storeItems[index].sizeList,
-                            );
-                          },
-                        ),
-                      );
-                    },
-                    child: Card(
-                      child: Stack(
-                        alignment: FractionalOffset.topLeft,
-                        children: <Widget>[
-                          Stack(
-                            alignment: FractionalOffset.bottomCenter,
-                            children: <Widget>[
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      fit: BoxFit.fitWidth,
-                                      image: NetworkImage(
-                                          storeItems[index].itemImage)),
-                                ),
-                              ),
-                              Container(
-                                height: 35.0,
-                                color: Colors.black.withAlpha(100),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(
-                                        "${storeItems[index].itemName.substring(0, 4)}...",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16.0,
-                                            color: Colors.white),
-                                      ),
-                                      Text(
-                                        "${storeItems[index].itemPrice} Baht",
-                                        style: TextStyle(
-                                            color: Colors.red[500],
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 16.0),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Container(
-                                height: 30.0,
-                                width: 60.0,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(5.0),
-                                    bottomRight: Radius.circular(5.0),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.blue,
-                                      size: 20.0,
-                                    ),
-                                    Text(
-                                      "${storeItems[index].itemRating}",
-                                      style: TextStyle(color: Colors.white),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(
-                                  Icons.favorite_border,
-                                  color: Colors.blue,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+      body: FutureBuilder(
+        future: loadData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) print(snapshot.error);
+          if (snapshot.hasData) {
+            return ListProduct(items: snapshot.data);
+          } else {
+            return Center(child: ProgressDialog());
+          }
+        },
       ),
       floatingActionButton: Stack(
         alignment: Alignment.topLeft,
