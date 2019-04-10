@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:store_app_proj/components/CustomShapeClipper.dart';
 import 'package:store_app_proj/components/products.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
@@ -21,6 +22,10 @@ import '../tools/Store.dart';
 import 'item_details.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+Color firstColor = Color.fromRGBO(29, 233, 182, 1);
+Color secondColor = Color.fromRGBO(0, 96, 100, 1);
+Color green = Color(0xFF272D34);
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -77,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     this.context = context;
     return Scaffold(
       appBar: AppBar(
+        // elevation: 2.0,
         title: Text('Healthies'),
         centerTitle: true,
         actions: <Widget>[
@@ -293,5 +299,77 @@ class _HomeScreenState extends State<HomeScreen> {
     bool response = await appMethod.logoutUser();
     if (response == true) _asyncMethod();
     Navigator.pop(context);
+  }
+}
+
+class HomeScreenTopPart extends StatefulWidget {
+  @override
+  _HomeScreenTopPartState createState() => _HomeScreenTopPartState();
+}
+
+class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
+  TextEditingController search = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ClipPath(
+        clipper: CustomShapeClipper(),
+        child: Container(
+          height: 300.0, color: Colors.teal,
+          width: double.infinity,
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(
+          //       colors: [firstColor, secondColor],
+          //       begin: const FractionalOffset(0.5, 0.0),
+          //       end: const FractionalOffset(0.0, 0.5),
+          //       stops: [0.0, 1.0],
+          //       tileMode: TileMode.clamp),
+          // ),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 50.0,
+              ),
+              Text(
+                'What would\nyou want to buy ?',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 30.0,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 32.0),
+                child: Material(
+                  elevation: 5.0,
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  child: TextField(
+                    controller: search,
+                    cursorColor: Colors.teal,
+                    decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 14.0),
+                        border: InputBorder.none,
+                        suffixIcon: Material(
+                          elevation: 2.0,
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30.0)),
+                          child: Icon(
+                            Icons.search,
+                            color: Colors.black,
+                          ),
+                        )),
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

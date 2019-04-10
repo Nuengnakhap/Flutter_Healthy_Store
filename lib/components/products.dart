@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/tools/Store.dart';
+import 'package:store_app_proj/userScreens/HomeScreen.dart';
 import 'package:store_app_proj/userScreens/item_details.dart';
 import 'dart:math';
 
@@ -11,14 +12,21 @@ class ListProduct extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: <Widget>[
-          Flexible(
-            child: GridView.builder(
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-              itemCount: items.length,
-              itemBuilder: (BuildContext context, int index) {
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate([
+              HomeScreenTopPart(),
+            ]),
+          ),
+          // HomeScreenTopPart(),
+          SliverGrid(
+            // physics: NeverScrollableScrollPhysics(),
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+            // itemCount: items.length,
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
@@ -148,6 +156,7 @@ class ListProduct extends StatelessWidget {
                   ),
                 );
               },
+              childCount: items.length,
             ),
           )
         ],
@@ -155,3 +164,7 @@ class ListProduct extends StatelessWidget {
     );
   }
 }
+
+
+// Reference Sliver -> https://benzneststudios.com/blog/flutter/what-is-a-sliver-and-sliver-delegate-in-flutter-ep-1/
+// https://medium.com/flutterpub/flutter-listview-gridview-inside-scrollview-68b722ae89d4
