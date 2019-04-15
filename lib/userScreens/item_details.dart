@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/components/shopping_cart.dart';
+import 'package:store_app_proj/dbModels/cart.dart';
+import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/userScreens/cart.dart';
 
 class ItemDetail extends StatefulWidget {
@@ -8,7 +11,7 @@ class ItemDetail extends StatefulWidget {
   String itemImage;
   String itemRating;
   String itemDesc;
-  List<String> sizeList;
+  String category;
 
   ItemDetail({
     this.itemName,
@@ -16,7 +19,7 @@ class ItemDetail extends StatefulWidget {
     this.itemImage,
     this.itemRating,
     this.itemDesc,
-    this.sizeList,
+    this.category,
   });
 
   @override
@@ -105,14 +108,6 @@ class _ItemDetailState extends State<ItemDetail> {
                         SizedBox(
                           height: 10.0,
                         ),
-                        Text(
-                          "Item Sub name",
-                          style: TextStyle(
-                              fontSize: 14.0, fontWeight: FontWeight.w400),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -134,7 +129,7 @@ class _ItemDetailState extends State<ItemDetail> {
                               ],
                             ),
                             Text(
-                              "N${widget.itemPrice}",
+                              "\$${widget.itemPrice}",
                               style: TextStyle(
                                   fontSize: 20.0,
                                   color: Colors.red[500],
@@ -240,39 +235,39 @@ class _ItemDetailState extends State<ItemDetail> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          "Sizes",
-                          style: TextStyle(
-                              fontSize: 18.0, fontWeight: FontWeight.w700),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        SizedBox(
-                          height: 50.0,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: widget.sizeList.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ChoiceChip(
-                                  label: Text("${widget.sizeList[index]}"),
-                                  selected: currentSizeIndex == index,
-                                  onSelected: (bool selected) {
-                                    setState(() {
-                                      currentSizeIndex =
-                                          selected ? index : null;
-                                    });
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // Text(
+                        //   "Sizes",
+                        //   style: TextStyle(
+                        //       fontSize: 18.0, fontWeight: FontWeight.w700),
+                        // ),
+                        // SizedBox(
+                        //   height: 10.0,
+                        // ),
+                        // SizedBox(
+                        //   height: 50.0,
+                        //   child: ListView.builder(
+                        //     scrollDirection: Axis.horizontal,
+                        //     itemCount: widget.category.length,
+                        //     itemBuilder: (context, index) {
+                        //       return Padding(
+                        //         padding: const EdgeInsets.all(4.0),
+                        //         child: ChoiceChip(
+                        //           label: Text("${widget.category[index]}"),
+                        //           selected: currentSizeIndex == index,
+                        //           onSelected: (bool selected) {
+                        //             setState(() {
+                        //               currentSizeIndex =
+                        //                   selected ? index : null;
+                        //             });
+                        //           },
+                        //         ),
+                        //       );
+                        //     },
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -288,11 +283,21 @@ class _ItemDetailState extends State<ItemDetail> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             CircleAvatar(
-                              child: Icon(Icons.remove),
+                              child: IconButton(
+                                onPressed: () {
+                                  _decrease();
+                                },
+                                icon: Icon(Icons.remove),
+                              ),
                             ),
                             Text(_counter.toString()),
                             CircleAvatar(
-                              child: Icon(Icons.add),
+                              child: IconButton(
+                                onPressed: () {
+                                  _increase();
+                                },
+                                icon: Icon(Icons.add),
+                              ),
                             ),
                           ],
                         ),
@@ -316,7 +321,7 @@ class _ItemDetailState extends State<ItemDetail> {
               Navigator.of(context).push(
                 CupertinoPageRoute(
                   builder: (BuildContext context) {
-                    return Cart();
+                    return CartScreen();
                   },
                 ),
               );
@@ -356,11 +361,25 @@ class _ItemDetailState extends State<ItemDetail> {
               ),
               Container(
                 width: (screenSize.width - 20) / 2,
-                child: Text(
-                  "ORDER NOW",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700),
+                child: GestureDetector(
+                  onTap: () async {
+                    await DBProvider(dbName: 'Cart').newDB(
+                      Cart(
+                        cartName: widget.itemName,
+                        cartPrice: widget.itemPrice,
+                        cartImage: widget.itemImage,
+                        cartRating: widget.itemRating,
+                        cartDesc: widget.itemDesc,
+                        cartQuantity: _counter,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    "ORDER NOW",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
             ],

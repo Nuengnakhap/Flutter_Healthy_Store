@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_data.dart';
 
@@ -13,29 +14,42 @@ class DBProvider {
   // static final DBProvider db = DBProvider._();
 
   Database _database;
-  
-  String dbName;
-  String cmdInitDB;
 
-  DBProvider({@required this.dbName, @required this.cmdInitDB});
+  String dbName;
+
+  DBProvider({@required this.dbName});
 
   Future<Database> get database async {
     if (_database != null) return _database;
     // if _database is null we instantiate it
-    if (cmdInitDB == '') {
-      print('Please fill command for init database');
-      return null;
-    }
-    _database = await initDB(cmdInitDB);
+    _database = await initDB();
     return _database;
   }
 
-  initDB(String cmd) async {
+  initDB() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, "TestDB.db");
     return await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database db, int version) async {
-      await db.execute(cmd);
+      await db.execute("CREATE TABLE Cart("
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+          "$c_pro_name TEXT,"
+          "$c_pro_price DOUBLE,"
+          "$c_pro_image TEXT,"
+          "$c_pro_rating TEXT,"
+          "$c_pro_desc TEXT,"
+          "$c_pro_quantity INTEGER"
+          ")");
+      await db.execute("CREATE TABLE Client ("
+          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+          "$userID TEXT,"
+          "$acctFullName TEXT,"
+          "$phoneNumber TEXT,"
+          "$userEmail TEXT,"
+          "$userPassword TEXT,"
+          "$photoURL TEXT,"
+          "$loggedIN INTEGER"
+          ")");
     });
   }
 
@@ -50,16 +64,16 @@ class DBProvider {
     dynamic blocked;
     if (object is Client) {
       blocked = Client(
-        id: object.id,
-        userUID: object.userUID,
-        fullName: object.fullName,
-        phone: object.phone,
-        email: object.email,
-        password: object.password,
-        photo: object.photo,
-        logged: !object.logged);
+          id: object.id,
+          userUID: object.userUID,
+          fullName: object.fullName,
+          phone: object.phone,
+          email: object.email,
+          password: object.password,
+          photo: object.photo,
+          logged: !object.logged);
     }
-    
+
     var res = await db.update(dbName, blocked.toMap(),
         where: "id = ?", whereArgs: [object.id]);
     return res;
@@ -82,7 +96,8 @@ class DBProvider {
 
   getLasted() async {
     final db = await database;
-    var res = await db.rawQuery("SELECT * FROM $dbName WHERE id = (SELECT max(id) FROM $dbName)");
+    var res = await db.rawQuery(
+        "SELECT * FROM $dbName WHERE id = (SELECT max(id) FROM $dbName)");
     if (dbName == 'Client') {
       return res.isNotEmpty ? Client.fromMap(res.first) : null;
     }
@@ -104,9 +119,13 @@ class DBProvider {
     final db = await database;
     var res = await db.query(dbName);
     List list;
-    
+
     if (dbName == 'Client') {
       list = res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
+    }
+
+    if (dbName == 'Cart') {
+      list = res.isNotEmpty ? res.map((c) => Cart.fromMap(c)).toList() : [];
     }
     print(dbName.runtimeType);
     return list;

@@ -1,7 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:html2md/html2md.dart' as html2md;
 
 class Store {
   String itemName;
@@ -9,7 +7,7 @@ class Store {
   String itemImage;
   String itemRating;
   String itemDesc;
-  List<String> sizeList;
+  String category;
 
   Store.items({
     this.itemName,
@@ -17,21 +15,25 @@ class Store {
     this.itemImage,
     this.itemRating,
     this.itemDesc,
-    this.sizeList,
+    this.category,
   });
 
   factory Store.fromJson(Map<String, dynamic> json) {
-    return Store.items(
-      itemName: json['name'] as String,
-      itemPrice: json['salePrice'] as double,
-      itemImage: json['largeImage'] as String,
-      itemRating: json['customerRating'] as String,
-      itemDesc: json['shortDescription'] as String,
-      sizeList: [],
-    );
+    var str = json['categoryPath'];
+    if (str.indexOf('Food') == 0) {
+      var unescape = new HtmlUnescape();
+      return Store.items(
+        itemName: json['name'] as String,
+        itemPrice: json['salePrice'] as double,
+        itemImage: json['largeImage'] as String,
+        itemRating: json['customerRating'] as String,
+        itemDesc: html2md.convert(unescape.convert(json['shortDescription'])),
+        category: json['categoryPath'] as String,
+      );
+    } else {
+      return null;
+    }
   }
-
-  
 }
 
 List<Store> storeItems = [
@@ -52,7 +54,7 @@ Eggs, milk, soya and wheat
 May contain following allergen(s)
 Nuts
     ''',
-    sizeList: ['25G', '50G', '75G'],
+    // category: ['25G', '50G', '75G'],
   ),
   Store.items(
     itemName: 'FORCHY CARAMEL BROWNIE 285 G',
@@ -71,7 +73,7 @@ Eggs, milk, soya and wheat.
 May contain following allergen(s)
 Nuts.
       ''',
-    sizeList: ['25G', '50G', '75G'],
+    // category: ['25G', '50G', '75G'],
   ),
   Store.items(
     itemName: 'FORCHY HAZELNUT BROWNIE 285 G',
@@ -88,7 +90,7 @@ Sugar - eggs - canola oil - chocolate - wheat flour - chocolate chips - hazelnut
 Contains following allergen(s)
 Wheat, eggs, nuts, milk and soya.
       ''',
-    sizeList: ['25G', '50G', '75G'],
+    // category: ['25G', '50G', '75G'],
   ),
   Store.items(
     itemName: 'FORCHY SPECULOOS BROWNIE 285 G',
@@ -108,6 +110,6 @@ Wheat, milk, eggs and soya.
 May contain following allergen(s)
 Nuts
       ''',
-    sizeList: ['25G', '50G', '75G'],
+    // category: ['25G', '50G', '75G'],
   ),
 ];

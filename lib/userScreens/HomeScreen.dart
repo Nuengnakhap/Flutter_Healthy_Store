@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:store_app_proj/components/CustomShapeClipper.dart';
 import 'package:store_app_proj/components/products.dart';
+import 'package:store_app_proj/components/shopping_cart.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
@@ -19,7 +19,6 @@ import 'delivery.dart';
 import 'about.dart';
 import 'login.dart';
 import '../tools/Store.dart';
-import 'item_details.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -43,14 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppMethods appMethod = FirebaseMethods();
 
+  StreamController _productController;
+
   @override
   void initState() {
     super.initState();
     _asyncMethod();
+    _productController = StreamController();
+    loadProducts();
   }
 
   Future _asyncMethod() async {
-    _client = await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+    _client = await DBProvider(dbName: 'Client')
         .getLasted();
     if (_client != null) {
       acctName = _client.fullName;
@@ -66,16 +69,51 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  Future<List<Store>> loadData() async {
-    http.Response response = await http.get(
-        "http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25");
-    // http.Response response = await http.get(
-    //     "https://grocery.walmart.com/v4/api/products/search?storeId=1855&page=1&query=healthy");
-    Map<String, dynamic> data = json.decode(response.body);
-    var rest = data['items'] as List;
-    List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
-    return stores;
+  Future fetchProduct() async {
+    final response = await http.get(
+        'http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25');
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> data = json.decode(response.body);
+      var rest = data['items'] as List;
+      List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
+      for (var i = 0; i < stores.length; i++) {
+        if (stores[i] == null) {
+          stores.removeAt(i);
+        }
+      }
+      return stores;
+    } else {
+      throw Exception('Failed to load products');
+    }
   }
+
+  loadProducts() async {
+    fetchProduct().then((res) async {
+      _productController.add(res);
+      return res;
+    });
+  }
+  // REF !!! Streambuilder !!!
+  // https://blog.khophi.co/using-refreshindicator-with-flutter-streambuilder/
+
+  // Future<List<Store>> loadData() async {
+  //   http.Response response = await http.get(
+  //       "http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25");
+  //   // http.Response response = await http.get(
+  //   //     "https://grocery.walmart.com/v4/api/products/search?storeId=1855&page=1&query=healthy");
+
+  //   Map<String, dynamic> data = json.decode(response.body);
+  //   var rest = data['items'] as List;
+  //   List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
+  //   for (var i = 0; i < stores.length; i++) {
+  //     if (stores[i] == null) {
+  //       stores.removeAt(i);
+  //     }
+  //   }
+  //   setState(() {});
+  //   return stores;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      body: FutureBuilder(
-        future: loadData(),
+      body: StreamBuilder(
+        stream: _productController.stream,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
@@ -132,28 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      floatingActionButton: Stack(
-        alignment: Alignment.topLeft,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .push(CupertinoPageRoute(builder: (BuildContext context) {
-                return Cart();
-              }));
-            },
-            child: Icon(Icons.shopping_cart),
-          ),
-          CircleAvatar(
-            radius: 10.0,
-            backgroundColor: Colors.red,
-            child: Text(
-              '0',
-              style: TextStyle(color: Colors.white, fontSize: 12.0),
-            ),
-          )
-        ],
-      ),
+      floatingActionButton: ShoppingCart(),
       drawer: Drawer(
         child: Column(
           children: <Widget>[
@@ -302,74 +319,3 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeScreenTopPart extends StatefulWidget {
-  @override
-  _HomeScreenTopPartState createState() => _HomeScreenTopPartState();
-}
-
-class _HomeScreenTopPartState extends State<HomeScreenTopPart> {
-  TextEditingController search = TextEditingController();
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: ClipPath(
-        clipper: CustomShapeClipper(),
-        child: Container(
-          height: 300.0, color: Colors.teal,
-          width: double.infinity,
-          // decoration: BoxDecoration(
-          //   gradient: LinearGradient(
-          //       colors: [firstColor, secondColor],
-          //       begin: const FractionalOffset(0.5, 0.0),
-          //       end: const FractionalOffset(0.0, 0.5),
-          //       stops: [0.0, 1.0],
-          //       tileMode: TileMode.clamp),
-          // ),
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 50.0,
-              ),
-              Text(
-                'What would\nyou want to buy ?',
-                style: TextStyle(
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(
-                height: 30.0,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32.0),
-                child: Material(
-                  elevation: 5.0,
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                  child: TextField(
-                    controller: search,
-                    cursorColor: Colors.teal,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 14.0),
-                        border: InputBorder.none,
-                        suffixIcon: Material(
-                          elevation: 2.0,
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(30.0)),
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.black,
-                          ),
-                        )),
-                  ),
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

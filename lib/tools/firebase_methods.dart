@@ -57,7 +57,7 @@ class FirebaseMethods implements AppMethods {
           email: email, password: password);
       if (user != null) {
         DocumentSnapshot userInfo = await getUserInfo(user.uid);
-        await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+        await DBProvider(dbName: 'Client')
             .newDB(Client(
           userUID: userInfo[userID],
           fullName: userInfo[acctFullName],
@@ -100,7 +100,7 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<bool> logoutUser() async {
     await auth.signOut();
-    await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB).deleteAll();
+    await DBProvider(dbName: 'Client').deleteAll();
     return complete();
   }
 
