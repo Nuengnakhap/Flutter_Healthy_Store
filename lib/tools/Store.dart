@@ -21,13 +21,13 @@ class Store {
   factory Store.fromJson(Map<String, dynamic> json) {
     var str = json['categoryPath'];
     if (str.indexOf('Food') == 0) {
-      var unescape = new HtmlUnescape();
+      var unescape = HtmlUnescape();
       return Store.items(
         itemName: json['name'] as String,
         itemPrice: json['salePrice'] as double,
         itemImage: json['largeImage'] as String,
         itemRating: json['customerRating'] as String,
-        itemDesc: html2md.convert(unescape.convert(json['shortDescription'])),
+        itemDesc: html2md.convert(unescape.convert(json['shortDescription'].toString())),
         category: json['categoryPath'] as String,
       );
     } else {

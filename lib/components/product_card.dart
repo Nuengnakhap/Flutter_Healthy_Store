@@ -135,7 +135,7 @@ class _ProductCardState extends State<ProductCard> {
                             Text(
                               "${widget.itemName.substring(0, [
                                     widget.itemName.length,
-                                    32
+                                    30
                                   ].reduce(min))}...",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
