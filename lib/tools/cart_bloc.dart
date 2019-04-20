@@ -38,7 +38,7 @@ class CartBloc {
     _lastOrder = Order(
       order_product: product,
       order_quantity: quantity,
-      order_id: _orderId++,
+      id: _orderId++,
     );
     _currentCart.addOrder(_lastOrder);
     _updateLastOrder();

@@ -1,89 +1,78 @@
-import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:store_app_proj/tools/image_picker_handler.dart';
+import 'package:store_app_proj/components/order_card.dart';
+import 'package:store_app_proj/dbModels/cart.dart';
+import 'package:store_app_proj/tools/cart_bloc.dart';
+import 'dart:math';
 
 class CartScreen extends StatefulWidget {
   @override
   _CartScreenState createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen>
-    with TickerProviderStateMixin, ImagePickerListener {
-  File _image;
-  AnimationController _controller;
-  ImagePickerHandler imagePicker;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = new AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    imagePicker = new ImagePickerHandler(this, _controller);
-    imagePicker.init();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+class _CartScreenState extends State<CartScreen> {
+  CartBloc _cartBloc = CartBloc();
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          'CART',
-          style: new TextStyle(color: Colors.white),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Cart'),
+        centerTitle: true,
       ),
-      body: new GestureDetector(
-        onTap: () => imagePicker.showDialog(context),
-        child: new Center(
-          child: _image == null
-              ? new Stack(
-                  children: <Widget>[
-                    new Center(
-                      child: new CircleAvatar(
-                        radius: 80.0,
-                        backgroundColor: const Color(0xFF778899),
+      body: StreamBuilder(
+        initialData: _cartBloc.currentCart,
+        stream: _cartBloc.observableCart,
+        builder: (context, AsyncSnapshot<Cart> snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              margin: EdgeInsets.only(
+                top: 10,
+                left: 8.0,
+                right: 8.0,
+                bottom: 2.0,
+              ),
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "ITEMS (${snapshot.data.orderCount})",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    new Center(
-                      child: new Image.asset("assets/images/photo_camera.png"),
-                    ),
-                  ],
-                )
-              : new Container(
-                  height: 160.0,
-                  width: 160.0,
-                  decoration: new BoxDecoration(
-                    color: const Color(0xff7c94b6),
-                    image: new DecorationImage(
-                      image: new ExactAssetImage(_image.path),
-                      fit: BoxFit.cover,
-                    ),
-                    border: Border.all(color: Colors.red, width: 5.0),
-                    borderRadius:
-                        new BorderRadius.all(const Radius.circular(80.0)),
+                      Text(
+                        "TOTAL : \$${snapshot.data.totalPrice().toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-        ),
+                  Flexible(
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: snapshot.data.orderCount,
+                      itemBuilder: (context, index) {
+                        return OrderWidget(snapshot.data.orders[index]);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: Text('Cart is empty'),
+            );
+          }
+        },
       ),
     );
   }
-
-  @override
-  userImage(File _image) {
-    setState(() {
-      this._image = _image;
-    });
-  }
 }
-
-// https://www.developerlibs.com/2018/08/flutter-capture-image-from-camera-or.html

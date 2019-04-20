@@ -6,13 +6,13 @@ import 'package:store_app_proj/components/products.dart';
 import 'package:store_app_proj/components/shopping_cart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'favorites.dart';
 import 'messages.dart';
-import 'cart.dart';
 import 'notifications.dart';
 import 'history.dart';
 import 'profile.dart';
@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String acctEmail = '';
   String acctPhotoUrl = '';
   bool isLoggedIn = false;
-  var numCart;
 
   AppMethods appMethod = FirebaseMethods();
 
@@ -51,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _asyncMethod();
     _productController = StreamController();
     loadProducts();
-    _getCartCount();
   }
 
   Future _asyncMethod() async {
@@ -100,8 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future _getCartCount() async {
-    numCart = await DBProvider(dbName: 'Cart').getAllDB();
-    setState(() {});
+    var numCart = await DBProvider(dbName: 'Cart').getAllDB();
+    for (Order item in numCart) {
+      print(item.id);
+      print(item.order_quantity);
+      print(item.order_product.itemName);
+    }
   }
   // REF !!! Streambuilder !!!
   // https://blog.khophi.co/using-refreshindicator-with-flutter-streambuilder/

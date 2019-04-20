@@ -1,22 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/components/shopping_cart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/userScreens/cart.dart';
 
 class ItemDetail extends StatefulWidget {
   Store product;
 
-  ItemDetail({
-    this.product
-  });
+  ItemDetail({this.product});
 
   @override
   _ItemDetailState createState() => _ItemDetailState();
 }
 
 class _ItemDetailState extends State<ItemDetail> {
+  final CartBloc _cartBloc = new CartBloc();
   bool isExpanded = false;
   int currentSizeIndex = 0;
   int _counter = 1;
@@ -303,31 +304,7 @@ class _ItemDetailState extends State<ItemDetail> {
           )
         ],
       ),
-      floatingActionButton: Stack(
-        alignment: Alignment.topLeft,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (BuildContext context) {
-                    return CartScreen();
-                  },
-                ),
-              );
-            },
-            child: Icon(Icons.shopping_cart),
-          ),
-          CircleAvatar(
-            radius: 10.0,
-            backgroundColor: Colors.red,
-            child: Text(
-              '0',
-              style: TextStyle(color: Colors.white, fontSize: 12.0),
-            ),
-          )
-        ],
-      ),
+      floatingActionButton: ShoppingCart(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
         color: Theme.of(context).primaryColor,
@@ -353,12 +330,14 @@ class _ItemDetailState extends State<ItemDetail> {
                 width: (screenSize.width - 20) / 2,
                 child: GestureDetector(
                   onTap: () async {
+                    _cartBloc.addOrderToCart(widget.product, _counter);
                     await DBProvider(dbName: 'Cart').newDB(
                       Order(
                         order_product: widget.product,
                         order_quantity: _counter,
                       ),
                     );
+                    Navigator.pop(context);
                   },
                   child: Text(
                     "ORDER NOW",

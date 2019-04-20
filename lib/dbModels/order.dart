@@ -4,11 +4,11 @@ import 'package:store_app_proj/tools/app_data.dart';
 class Order {
   Store order_product;
   int order_quantity;
-  int order_id;
+  int id;
 
-  Order({this.order_product, this.order_quantity, this.order_id});
-  String pname;
-  int get id => order_id;
+  Order({this.order_product, this.order_quantity, this.id});
+
+  // int get id => order_id;
 
   int get quantity => order_quantity;
 
@@ -25,7 +25,7 @@ class Order {
       itemDesc: json[c_pro_desc],
     );
     return Order(
-      order_id: json['id'],
+      id: json['id'],
       order_product: _p,
       order_quantity: json[c_pro_quantity],
     );

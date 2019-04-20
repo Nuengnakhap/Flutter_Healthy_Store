@@ -1,11 +1,22 @@
+import 'dart:async';
+
 import 'package:store_app_proj/dbModels/order.dart';
+import 'package:store_app_proj/tools/app_db.dart';
 
 class Cart{
 
   List<Order> _orders;
 
   Cart(){
-    _orders = new List();
+    _orders = List();
+    fetchCart();
+  }
+
+  Future fetchCart() async {
+    List dd = await DBProvider(dbName: 'Cart').getAllDB();
+    for (var item in dd) {
+      _orders.add(item);
+    }
   }
 
   void addOrder(Order order){
