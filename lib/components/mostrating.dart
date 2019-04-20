@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/product_card.dart';
-import 'package:store_app_proj/tools/Store.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
 
 class MostRating extends StatefulWidget {
   List<Store> items;
@@ -55,11 +55,13 @@ class _MostRatingState extends State<MostRating> {
               itemCount: 5,
               itemBuilder: (BuildContext context, int index) {
                 return ProductCard(
-                  itemName: newList[newList.length - 1 - index].itemName,
-                  itemPrice: newList[newList.length - 1 - index].itemPrice,
-                  itemImage: newList[newList.length - 1 - index].itemImage,
-                  itemRating: newList[newList.length - 1 - index].itemRating,
-                  itemDesc: newList[newList.length - 1 - index].itemDesc,
+                  product: Store.items(
+                    itemName: newList[newList.length - 1 - index].itemName,
+                    itemPrice: newList[newList.length - 1 - index].itemPrice,
+                    itemImage: newList[newList.length - 1 - index].itemImage,
+                    itemRating: newList[newList.length - 1 - index].itemRating,
+                    itemDesc: newList[newList.length - 1 - index].itemDesc,
+                  ),
                 );
               },
             ),

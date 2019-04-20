@@ -7,7 +7,7 @@ class Store {
   String itemImage;
   String itemRating;
   String itemDesc;
-  String category;
+  String category = '';
 
   Store.items({
     this.itemName,
@@ -15,7 +15,7 @@ class Store {
     this.itemImage,
     this.itemRating,
     this.itemDesc,
-    this.category,
+    this.category
   });
 
   factory Store.fromJson(Map<String, dynamic> json) {

@@ -1,50 +1,34 @@
-import 'package:store_app_proj/tools/app_data.dart';
+import 'package:store_app_proj/dbModels/order.dart';
 
-class Cart {
-  int id;
-  String cartName;
-  double cartPrice;
-  String cartImage;
-  String cartRating;
-  String cartDesc;
-  int cartQuantity;
-  
-  static String cmdInitDB = "CREATE TABLE Cart("
-          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-          "$c_pro_name TEXT,"
-          "$c_pro_price DOUBLE,"
-          "$c_pro_image TEXT,"
-          "$c_pro_rating TEXT,"
-          "$c_pro_desc TEXT,"
-          "$c_pro_quantity INTEGER"
-          ")";
+class Cart{
 
-  Cart({
-    this.id,
-    this.cartName,
-    this.cartPrice,
-    this.cartImage,
-    this.cartRating,
-    this.cartDesc,
-    this.cartQuantity,
-  });
+  List<Order> _orders;
 
-  factory Cart.fromMap(Map<String, dynamic> json) => new Cart(
-        id: json['id'],
-        cartName: json[c_pro_name],
-        cartPrice: json[c_pro_price],
-        cartImage: json[c_pro_image],
-        cartRating: json[c_pro_rating],
-        cartDesc: json[c_pro_desc],
-        cartQuantity: json[c_pro_quantity],
-      );
+  Cart(){
+    _orders = new List();
+  }
 
-  Map<String, dynamic> toMap() => {
-        c_pro_name: cartName,
-        c_pro_price: cartPrice,
-        c_pro_image: cartImage,
-        c_pro_rating: cartRating,
-        c_pro_desc: cartDesc,
-        c_pro_quantity: cartQuantity,
-      };
+  void addOrder(Order order){
+    _orders.add(order);
+  }
+
+  void removeOrder(Order order){
+    _orders.remove(order);
+  }
+
+  double totalPrice(){
+    double total = 0;
+    _orders.forEach((o){
+      total += o.orderPrice;
+    });
+
+    return total;
+  }
+
+  List<Order> get orders => _orders;
+
+  int get orderCount => _orders.length;
+
+  bool get isEmpty => _orders.length == 0;
+
 }

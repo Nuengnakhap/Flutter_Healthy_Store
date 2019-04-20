@@ -1,25 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:store_app_proj/components/shopping_cart.dart';
-import 'package:store_app_proj/dbModels/cart.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
+import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/userScreens/cart.dart';
 
 class ItemDetail extends StatefulWidget {
-  String itemName;
-  double itemPrice;
-  String itemImage;
-  String itemRating;
-  String itemDesc;
-  String category;
+  Store product;
 
   ItemDetail({
-    this.itemName,
-    this.itemPrice,
-    this.itemImage,
-    this.itemRating,
-    this.itemDesc,
-    this.category,
+    this.product
   });
 
   @override
@@ -65,7 +55,7 @@ class _ItemDetailState extends State<ItemDetail> {
             height: 300.0,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(widget.itemImage),
+                image: NetworkImage(widget.product.itemImage),
                 fit: BoxFit.fitHeight,
               ),
               borderRadius: BorderRadius.only(
@@ -101,7 +91,7 @@ class _ItemDetailState extends State<ItemDetail> {
                           height: 10.0,
                         ),
                         Text(
-                          widget.itemName,
+                          widget.product.itemName,
                           style: TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.w700),
                         ),
@@ -123,13 +113,13 @@ class _ItemDetailState extends State<ItemDetail> {
                                   width: 5.0,
                                 ),
                                 Text(
-                                  "${widget.itemRating}",
+                                  "${widget.product.itemRating}",
                                   style: TextStyle(color: Colors.black),
                                 )
                               ],
                             ),
                             Text(
-                              "\$${widget.itemPrice}",
+                              "\$${widget.product.itemPrice}",
                               style: TextStyle(
                                   fontSize: 20.0,
                                   color: Colors.red[500],
@@ -159,7 +149,7 @@ class _ItemDetailState extends State<ItemDetail> {
                               margin: EdgeInsets.only(left: 5.0, right: 5.0),
                               height: 140.0,
                               width: 100.0,
-                              child: Image.network(widget.itemImage),
+                              child: Image.network(widget.product.itemImage),
                             ),
                             Container(
                               margin: EdgeInsets.only(left: 5.0, right: 5.0),
@@ -196,11 +186,11 @@ class _ItemDetailState extends State<ItemDetail> {
                           padding: EdgeInsets.only(),
                           child: AnimatedCrossFade(
                             firstChild: Text(
-                              widget.itemDesc,
+                              widget.product.itemDesc,
                               maxLines: 2,
                             ),
                             secondChild: Text(
-                              widget.itemDesc,
+                              widget.product.itemDesc,
                             ),
                             crossFadeState: isExpanded
                                 ? CrossFadeState.showSecond
@@ -250,12 +240,12 @@ class _ItemDetailState extends State<ItemDetail> {
                         //   height: 50.0,
                         //   child: ListView.builder(
                         //     scrollDirection: Axis.horizontal,
-                        //     itemCount: widget.category.length,
+                        //     itemCount: widget.product.category.length,
                         //     itemBuilder: (context, index) {
                         //       return Padding(
                         //         padding: const EdgeInsets.all(4.0),
                         //         child: ChoiceChip(
-                        //           label: Text("${widget.category[index]}"),
+                        //           label: Text("${widget.product.category[index]}"),
                         //           selected: currentSizeIndex == index,
                         //           onSelected: (bool selected) {
                         //             setState(() {
@@ -364,13 +354,9 @@ class _ItemDetailState extends State<ItemDetail> {
                 child: GestureDetector(
                   onTap: () async {
                     await DBProvider(dbName: 'Cart').newDB(
-                      Cart(
-                        cartName: widget.itemName,
-                        cartPrice: widget.itemPrice,
-                        cartImage: widget.itemImage,
-                        cartRating: widget.itemRating,
-                        cartDesc: widget.itemDesc,
-                        cartQuantity: _counter,
+                      Order(
+                        order_product: widget.product,
+                        order_quantity: _counter,
                       ),
                     );
                   },

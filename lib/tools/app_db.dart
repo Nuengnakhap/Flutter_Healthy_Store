@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_data.dart';
 
 class DBProvider {
@@ -106,7 +107,6 @@ class DBProvider {
   Future<List<Client>> getBlockedClients() async {
     final db = await database;
 
-    print("works");
     // var res = await db.rawQuery("SELECT * FROM Client WHERE blocked=1");
     var res = await db.query("Client", where: "$loggedIN = ? ", whereArgs: [1]);
 
@@ -125,9 +125,8 @@ class DBProvider {
     }
 
     if (dbName == 'Cart') {
-      list = res.isNotEmpty ? res.map((c) => Cart.fromMap(c)).toList() : [];
+      list = res.isNotEmpty ? res.map((c) => Order.fromMap(c)).toList() : [];
     }
-    print(dbName.runtimeType);
     return list;
   }
 

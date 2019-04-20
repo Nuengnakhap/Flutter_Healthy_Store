@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/mostrating.dart';
 import 'package:store_app_proj/components/product_card.dart';
 import 'package:store_app_proj/components/searchbar.dart';
-import 'package:store_app_proj/tools/Store.dart';
-import 'package:store_app_proj/userScreens/item_details.dart';
-import 'dart:math';
+import 'package:store_app_proj/dbModels/Store.dart';
 
 class ListProduct extends StatelessWidget {
   List<Store> items;
@@ -52,11 +50,13 @@ class ListProduct extends StatelessWidget {
               (BuildContext context, int index) {
                 return Card(
                   child: ProductCard(
-                    itemName: items.elementAt(index).itemName,
-                    itemImage: items.elementAt(index).itemImage,
-                    itemPrice: items.elementAt(index).itemPrice,
-                    itemRating: items.elementAt(index).itemRating,
-                    itemDesc: items.elementAt(index).itemDesc,
+                    product: Store.items(
+                      itemName: items.elementAt(index).itemName,
+                      itemImage: items.elementAt(index).itemImage,
+                      itemPrice: items.elementAt(index).itemPrice,
+                      itemRating: items.elementAt(index).itemRating,
+                      itemDesc: items.elementAt(index).itemDesc,
+                    ),
                   ),
                 );
               },

@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:store_app_proj/tools/Store.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
 
 class Favorites extends StatefulWidget {
   @override

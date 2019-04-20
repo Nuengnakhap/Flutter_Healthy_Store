@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:store_app_proj/components/products.dart';
 import 'package:store_app_proj/components/shopping_cart.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
@@ -18,7 +19,6 @@ import 'profile.dart';
 import 'delivery.dart';
 import 'about.dart';
 import 'login.dart';
-import '../tools/Store.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String acctEmail = '';
   String acctPhotoUrl = '';
   bool isLoggedIn = false;
+  var numCart;
 
   AppMethods appMethod = FirebaseMethods();
 
@@ -50,11 +51,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _asyncMethod();
     _productController = StreamController();
     loadProducts();
+    _getCartCount();
   }
 
   Future _asyncMethod() async {
-    _client = await DBProvider(dbName: 'Client')
-        .getLasted();
+    _client = await DBProvider(dbName: 'Client').getLasted();
     if (_client != null) {
       acctName = _client.fullName;
       acctEmail = _client.email;
@@ -72,27 +73,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Future fetchProduct() async {
     final response = await http.get(
         'http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25');
-
-    if (response.statusCode == 200) {
-      Map<String, dynamic> data = json.decode(response.body);
-      var rest = data['items'] as List;
-      List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
-      for (var i = 0; i < stores.length; i++) {
-        if (stores[i] == null) {
-          stores.removeAt(i);
+    try {
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = json.decode(response.body);
+        var rest = data['items'] as List;
+        List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
+        for (var i = 0; i < stores.length; i++) {
+          if (stores[i] == null) {
+            stores.removeAt(i);
+          }
         }
+        return stores;
+      } else {
+        throw Exception('Failed to load products');
       }
-      return stores;
-    } else {
-      throw Exception('Failed to load products');
+    } catch (e) {
+      print(e.toString());
     }
   }
 
   loadProducts() async {
-    fetchProduct().then((res) async {
+    await fetchProduct().then((res) async {
       _productController.add(res);
       return res;
     });
+  }
+
+  Future _getCartCount() async {
+    numCart = await DBProvider(dbName: 'Cart').getAllDB();
+    setState(() {});
   }
   // REF !!! Streambuilder !!!
   // https://blog.khophi.co/using-refreshindicator-with-flutter-streambuilder/
@@ -318,4 +327,3 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.pop(context);
   }
 }
-

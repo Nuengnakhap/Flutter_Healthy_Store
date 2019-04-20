@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
 import 'dart:math';
 
 import 'package:store_app_proj/userScreens/item_details.dart';
 
 class ProductCard extends StatefulWidget {
-  String itemName;
-  double itemPrice;
-  String itemImage;
-  String itemRating;
-  String itemDesc;
+  Store product;
 
   ProductCard({
-    this.itemName,
-    this.itemPrice,
-    this.itemImage,
-    this.itemRating,
-    this.itemDesc,
+    this.product
   });
 
   @override
@@ -31,11 +24,7 @@ class _ProductCardState extends State<ProductCard> {
           MaterialPageRoute(
             builder: (BuildContext context) {
               return ItemDetail(
-                itemName: widget.itemName,
-                itemImage: widget.itemImage,
-                itemPrice: widget.itemPrice,
-                itemRating: widget.itemRating,
-                itemDesc: widget.itemDesc,
+                product: widget.product,
               );
             },
           ),
@@ -53,7 +42,7 @@ class _ProductCardState extends State<ProductCard> {
                     height: 210.0,
                     width: 160.0,
                     child: Image.network(
-                      widget.itemImage,
+                      widget.product.itemImage,
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -86,7 +75,7 @@ class _ProductCardState extends State<ProductCard> {
                                 size: 20.0,
                               ),
                               Text(
-                                widget.itemRating,
+                                widget.product.itemRating,
                                 style: TextStyle(
                                   color: Colors.black,
                                 ),
@@ -133,8 +122,8 @@ class _ProductCardState extends State<ProductCard> {
                           // crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "${widget.itemName.substring(0, [
-                                    widget.itemName.length,
+                              "${widget.product.itemName.substring(0, [
+                                    widget.product.itemName.length,
                                     30
                                   ].reduce(min))}...",
                               style: TextStyle(
@@ -158,7 +147,7 @@ class _ProductCardState extends State<ProductCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    "\$${widget.itemPrice}",
+                    "\$${widget.product.itemPrice}",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
