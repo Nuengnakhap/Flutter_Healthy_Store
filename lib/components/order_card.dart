@@ -1,21 +1,45 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/order.dart';
+import 'package:store_app_proj/tools/app_db.dart';
 import 'dart:math';
 
-class OrderWidget extends StatelessWidget {
+import 'package:store_app_proj/tools/cart_bloc.dart';
+
+class OrderWidget extends StatefulWidget {
   final Order _order;
   OrderWidget(this._order);
 
   @override
+  _OrderWidgetState createState() => _OrderWidgetState();
+}
+
+class _OrderWidgetState extends State<OrderWidget> {
+  final CartBloc _cartBloc = new CartBloc();
+
+  // int _quantity = widget._order.order_quantity;
+
+  void _increase() {
+    setState(() {
+      widget._order.order_quantity++;
+    });
+    _cartBloc.updateOrderOfCart(widget._order);
+  }
+
+  void _decrease() {
+    setState(() {
+      if (widget._order.order_quantity > 1) widget._order.order_quantity--;
+    });
+    _cartBloc.updateOrderOfCart(widget._order);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15.0)
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 16.0, top: 8.0, bottom: 8.0, right: 8.0),
+            left: 10.0, top: 10.0, bottom: 10.0, right: 10.0),
         child: Column(
           children: <Widget>[
             Row(
@@ -26,7 +50,8 @@ class OrderWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     //color: color,
                     image: DecorationImage(
-                      image: NetworkImage(_order.order_product.itemImage),
+                      image:
+                          NetworkImage(widget._order.order_product.itemImage),
                     ),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
@@ -37,14 +62,16 @@ class OrderWidget extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text("${_order.order_product.itemName.substring(0, [
-                              _order.order_product.itemName.length,
-                              30
-                            ].reduce(min))}..."),
+                        Text(
+                            "${widget._order.order_product.itemName.substring(0, [
+                                  widget._order.order_product.itemName.length,
+                                  30
+                                ].reduce(min))}..."),
                         const Padding(padding: const EdgeInsets.only(top: 5.0)),
                         Text(
                           "\$" +
-                              _order.order_product.itemPrice.toStringAsFixed(2),
+                              widget._order.order_product.itemPrice
+                                  .toStringAsFixed(2),
                           style: const TextStyle(
                             color: const Color(0xFF8E8E93),
                             fontSize: 13.0,
@@ -61,13 +88,14 @@ class OrderWidget extends StatelessWidget {
                     CupertinoIcons.minus_circled,
                     semanticLabel: 'Substract',
                   ),
-                  onPressed: () {
-                    // removeQuantity(fbconn.getKeyIDasList()[index],
-                    //     fbconn.getItemQuantityAsList()[index]);
-                  },
+                  onPressed: _decrease,
+                  // () {
+                  //   // removeQuantity(fbconn.getKeyIDasList()[index],
+                  //   //     fbconn.getItemQuantityAsList()[index]);
+                  // },
                 ),
                 Text(
-                  _order.order_quantity.toString(),
+                  widget._order.order_quantity.toString(),
                   style: const TextStyle(
                     color: const Color(0xFF8E8E93),
                     fontSize: 13.0,
@@ -80,50 +108,49 @@ class OrderWidget extends StatelessWidget {
                     CupertinoIcons.plus_circled,
                     semanticLabel: 'Add',
                   ),
-                  onPressed: () {
+                  onPressed: _increase,
+                  // () {
                     // addQuantity(fbconn.getKeyIDasList()[index],
                     //     fbconn.getItemQuantityAsList()[index]);
-                  },
+                  // },
                 ),
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      /* showInSnackBar(fbconn.getProductNameAsList()[index] +
-                                " has been removed");
-                            setState(() {});*/
-                    },
-                    child: Container(
-                      width: 120.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
+                FlatButton(
+                  onPressed: () {
+                    _cartBloc.removerOrderOfCart(widget._order);
+                    /* showInSnackBar(fbconn.getProductNameAsList()[index] +
+                              " has been removed");
+                          setState(() {});*/
+                  },
+                  child: Container(
+                    width: 100.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(5.0),
                       ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(3.0),
-                              child: Icon(
-                                Icons.remove_shopping_cart,
-                                size: 18.0,
-                              ),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(3.0),
+                            child: Icon(
+                              Icons.remove_shopping_cart,
+                              size: 18.0,
                             ),
-                            Text(
-                              "REMOVE",
-                              style: TextStyle(fontSize: 10.0),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            "REMOVE",
+                            style: TextStyle(fontSize: 10.0),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -137,38 +164,35 @@ class OrderWidget extends StatelessWidget {
                     right: 10.0,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      /* showInSnackBar(fbconn.getProductNameAsList()[index] +
-                                " has been added to your favorites");
-                            setState(() {});*/
-                    },
-                    child: Container(
-                      width: 120.0,
-                      height: 40.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.all(3.0),
-                              child: Icon(
-                                Icons.favorite_border,
-                                size: 18.0,
-                              ),
+                FlatButton(
+                  onPressed: () {
+                    /* showInSnackBar(fbconn.getProductNameAsList()[index] +
+                              " has been added to your favorites");
+                          setState(() {});*/
+                  },
+                  child: Container(
+                    width: 120.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.all(3.0),
+                            child: Icon(
+                              Icons.favorite_border,
+                              size: 18.0,
                             ),
-                            Text(
-                              "ADD TO FAVORITES",
-                              style: TextStyle(fontSize: 10.0),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Text(
+                            "ADD TO FAVORITES",
+                            style: TextStyle(fontSize: 10.0),
+                          ),
+                        ],
                       ),
                     ),
                   ),

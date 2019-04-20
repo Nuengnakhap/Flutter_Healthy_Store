@@ -130,9 +130,9 @@ class DBProvider {
     return list;
   }
 
-  deleteClient(int id) async {
+  deleteDB(object) async {
     final db = await database;
-    return db.delete(dbName, where: "id = ?", whereArgs: [id]);
+    return db.delete(dbName, where: "id = ?", whereArgs: [object.id]);
   }
 
   deleteAll() async {

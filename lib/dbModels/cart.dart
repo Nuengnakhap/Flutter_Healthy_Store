@@ -27,6 +27,14 @@ class Cart{
     _orders.remove(order);
   }
 
+  void updateOrder(Order order){
+    for (var item in _orders) {
+      if (item.id == order.id) {
+        item.order_quantity = order.order_quantity;
+      }
+    }
+  }
+
   double totalPrice(){
     double total = 0;
     _orders.forEach((o){

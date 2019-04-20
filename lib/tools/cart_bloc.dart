@@ -2,6 +2,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/dbModels/order.dart';
+import 'package:store_app_proj/tools/app_db.dart';
 
 class CartBloc {
   static int _orderId = 0;
@@ -45,8 +46,27 @@ class CartBloc {
     _updateCart();
   }
 
-  void removerOrderOfCart(Order order) {
+  void removerOrderOfCart(Order order) async {
     _currentCart.removeOrder(order);
+    await DBProvider(dbName: 'Cart').deleteDB(
+      Order(
+        id: order.id,
+        order_product: order.order_product,
+        order_quantity: order.order_quantity,
+      ),
+    );
+    _updateCart();
+  }
+
+  void updateOrderOfCart(Order order) async {
+    _currentCart.updateOrder(order);
+    await DBProvider(dbName: 'Cart').updateDB(
+      Order(
+        id: order.id,
+        order_product: order.order_product,
+        order_quantity: order.order_quantity,
+      ),
+    );
     _updateCart();
   }
 
