@@ -23,12 +23,12 @@ class Store {
     if (str.indexOf('Food') == 0) {
       var unescape = HtmlUnescape();
       return Store.items(
-        itemName: json['name'] as String,
+        itemName: json['name'].toString(),
         itemPrice: json['salePrice'] as double,
-        itemImage: json['largeImage'] as String,
-        itemRating: json['customerRating'] as String,
+        itemImage: json['largeImage'].toString(),
+        itemRating: json['customerRating'].toString(),
         itemDesc: html2md.convert(unescape.convert(json['shortDescription'].toString())),
-        category: json['categoryPath'] as String,
+        category: json['categoryPath'].toString(),
       );
     } else {
       return null;

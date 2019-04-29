@@ -75,7 +75,7 @@ class _ProductCardState extends State<ProductCard> {
                                 size: 20.0,
                               ),
                               Text(
-                                widget.product.itemRating,
+                                widget.product.itemRating.toString(),
                                 style: TextStyle(
                                   color: Colors.black,
                                 ),
@@ -147,7 +147,7 @@ class _ProductCardState extends State<ProductCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    "\$${widget.product.itemPrice}",
+                    "\$${widget.product.itemPrice.toString()}",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

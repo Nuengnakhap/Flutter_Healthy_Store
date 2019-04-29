@@ -16,11 +16,12 @@ class ListProduct extends StatelessWidget {
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildListDelegate([
-              SearchBar(),
+              SearchBar(items: items),
               Card(
-                  child: MostRating(
-                items: items,
-              )),
+                child: MostRating(
+                  items: items,
+                ),
+              ),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

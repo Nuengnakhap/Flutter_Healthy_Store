@@ -18,11 +18,11 @@ class _MostRatingState extends State<MostRating> {
     checkRatings();
   }
 
-  checkRatings() {
+  checkRatings() async {
     newList = List();
-    widget.items.forEach((f) {
-      newList.add(f);
-    });
+    for (var item in widget.items) {
+      newList.add(item);
+    }
     newList.sort((a, b) =>
         double.parse(a.itemRating).compareTo(double.parse(b.itemRating)));
   }

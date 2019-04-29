@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/CustomShapeClipper.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
+import 'package:store_app_proj/tools/app_search.dart';
 
 class SearchBar extends StatefulWidget {
+  List<Store> items;
+
+  SearchBar({this.items});
+
   @override
   _SearchBarState createState() => _SearchBarState();
 }
@@ -50,17 +56,25 @@ class _SearchBarState extends State<SearchBar> {
                     controller: search,
                     cursorColor: Colors.teal,
                     decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 14.0),
-                        border: InputBorder.none,
-                        suffixIcon: Material(
-                          elevation: 2.0,
-                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.black,
-                          ),
-                        )),
+                      contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 14.0),
+                      border: InputBorder.none,
+                      suffixIcon: Material(
+                        elevation: 2.0,
+                        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                        child: IconButton(
+                          icon: Icon(Icons.search),
+                          color: Colors.black,
+                          onPressed: () {
+                            showSearch(
+                              context: context,
+                              delegate: DataSearch(items: widget.items),
+                              query: search.text,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               )
