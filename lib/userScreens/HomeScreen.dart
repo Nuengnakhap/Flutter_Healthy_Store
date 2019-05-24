@@ -79,17 +79,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future fetchProduct() async {
     final response = await http.get(
-        'http://api.walmartlabs.com/v1/search?apiKey=yvjjwrpu5t9tegghg4a5qs6z&query=healthy&categoryId=976759&start=1&numItems=25');
+        'http://onezlinks.com:8090/files/product.json');
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
         var rest = data['items'] as List;
         List<Store> stores = rest.map((json) => Store.fromJson(json)).toList();
-        for (var i = 0; i < stores.length; i++) {
-          if (stores[i] == null) {
-            stores.removeAt(i);
-          }
-        }
+        // for (var i = 0; i < stores.length; i++) {
+        //   if (stores[i] == null) {
+        //     stores.remove(stores[i]);
+        //   }
+        // }
+        stores.removeWhere((item) => item == null);
         return stores;
       } else {
         throw Exception('Failed to load products');
@@ -188,10 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }));
                   } else if (acctName == 'Guest') {
-                    Navigator.of(context).push(
-                        CupertinoPageRoute(builder: (BuildContext context) {
-                      return Login();
-                    }));
+                    checkIfLoggedIn();
                   } else {
                     Navigator.of(context).push(
                         CupertinoPageRoute(builder: (BuildContext context) {

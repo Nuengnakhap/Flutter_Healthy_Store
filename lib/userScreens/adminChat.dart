@@ -31,16 +31,16 @@ class AdminScreenState extends State<AdminScreen> {
                 .where('isMessage', isEqualTo: 1)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData && snapshot.data.documents.length == 0) {
-                return Center(
-                  child: Text('No user chat on you'),
-                );
-              } else {
+              if (snapshot.hasData && snapshot.data.documents.length > 0) {
                 return ListView.builder(
                   padding: EdgeInsets.all(10.0),
                   itemBuilder: (context, index) =>
                       buildList(context, snapshot.data.documents[index]),
                   itemCount: snapshot.data.documents.length,
+                );
+              } else {
+                return Center(
+                  child: Text('No user chat on you'),
                 );
               }
             },

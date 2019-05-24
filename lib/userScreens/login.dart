@@ -88,7 +88,7 @@ class _LoginState extends State<Login> {
     if (response == successful) {
       closeProgressDialog(context);
       Navigator.pop(context, true);
-      Navigator.pop(context);
+      // Navigator.pop(context);
     } else {
       closeProgressDialog(context);
       showSnackbar(response, scaffoldkey);
