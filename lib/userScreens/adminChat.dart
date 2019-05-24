@@ -52,7 +52,7 @@ class AdminScreenState extends State<AdminScreen> {
 
   Widget buildList(BuildContext context, DocumentSnapshot document) {
     return Container(
-      child: document['isMessage'] == 0
+      child: document.data['isMessage'] == 0
           ? Container()
           : FlatButton(
               child: Row(
@@ -67,7 +67,7 @@ class AdminScreenState extends State<AdminScreen> {
                             height: 50.0,
                             padding: EdgeInsets.all(15.0),
                           ),
-                      imageUrl: document['photoURL'],
+                      imageUrl: document.data['photoURL'],
                       width: 50.0,
                       height: 50.0,
                       fit: BoxFit.cover,
@@ -81,7 +81,7 @@ class AdminScreenState extends State<AdminScreen> {
                         children: <Widget>[
                           Container(
                             child: Text(
-                              'Name: ${document['acctFullName']}',
+                              'Name: ${document.data['acctFullName']}',
                               style: TextStyle(color: Colors.black),
                             ),
                             alignment: Alignment.centerLeft,
@@ -89,7 +89,7 @@ class AdminScreenState extends State<AdminScreen> {
                           ),
                           Container(
                             child: Text(
-                              'Tell: ${document['phoneNumber'] ?? '-'}',
+                              'Tell: ${document.data['phoneNumber'] ?? '-'}',
                               style: TextStyle(color: Colors.black),
                             ),
                             alignment: Alignment.centerLeft,
@@ -103,6 +103,16 @@ class AdminScreenState extends State<AdminScreen> {
                 ],
               ),
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Chat(
+                          peerId: document.documentID,
+                          userId: widget.userId,
+                          peerAvatar: document.data['photoURL'],
+                        ),
+                  ),
+                );
                 Firestore.instance
                     .collection('usersData')
                     .document(document.documentID)
@@ -112,24 +122,13 @@ class AdminScreenState extends State<AdminScreen> {
                       .collection('usersData')
                       .document(document.documentID)
                       .setData({
-                    'acctFullName': item['acctFullName'],
-                    'phoneNumber': item['phoneNumber'],
-                    'photoURL': item['photoURL'],
-                    'userEmail': item['userEmail'],
-                    'userID': item['userID'],
-                    'userPassword': item['userPassword'],
+                    'acctFullName': item.data['acctFullName'],
+                    'phoneNumber': item.data['phoneNumber'],
+                    'photoURL': item.data['photoURL'],
+                    'userEmail': item.data['userEmail'],
+                    'userID': item.data['userID'],
+                    'userPassword': item.data['userPassword'],
                     'isMessage': 0
-                  }).then((r) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Chat(
-                              peerId: document.documentID,
-                              userId: widget.userId,
-                              peerAvatar: document['photoURL'],
-                            ),
-                      ),
-                    );
                   });
                 });
               },
