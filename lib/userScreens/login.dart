@@ -82,7 +82,7 @@ class _LoginState extends State<Login> {
       return;
     }
     displayProgressDialog(context);
-    
+
     String response =
         await appMethod.loginUser(email: email.text, password: password.text);
     if (response == successful) {

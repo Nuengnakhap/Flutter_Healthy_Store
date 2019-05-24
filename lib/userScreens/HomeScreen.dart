@@ -12,7 +12,7 @@ import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'favorites.dart';
-import 'messages.dart';
+import 'adminChat.dart';
 import 'notifications.dart';
 import 'history.dart';
 import 'profile.dart';
@@ -21,6 +21,8 @@ import 'about.dart';
 import 'login.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'chat.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Color firstColor = Color.fromRGBO(29, 233, 182, 1);
 Color secondColor = Color.fromRGBO(0, 96, 100, 1);
@@ -39,7 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
   String acctEmail = '';
   String acctPhotoUrl = '';
   bool isLoggedIn = false;
-
+  String adminId;
+  String userId = '';
+  String id;
+  String peer;
+  String groupchatId;
   AppMethods appMethod = FirebaseMethods();
 
   StreamController _productController;
@@ -50,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _asyncMethod();
     _productController = StreamController();
     loadProducts();
+    getIdAdmin();
   }
 
   Future _asyncMethod() async {
@@ -59,11 +66,13 @@ class _HomeScreenState extends State<HomeScreen> {
       acctEmail = _client.email;
       acctPhotoUrl = _client.photo;
       isLoggedIn = _client.logged;
+      userId = _client.userUID;
     } else {
       acctName = 'Guest';
       acctEmail = '';
       acctPhotoUrl = '';
       isLoggedIn = false;
+      userId = '';
     }
     setState(() {});
   }
@@ -126,6 +135,23 @@ class _HomeScreenState extends State<HomeScreen> {
   //   return stores;
   // }
 
+  Future getIdAdmin() async {
+    await Firestore.instance.collection('usersData').snapshots().forEach((r) {
+      r.documents.forEach((r) {
+        Firestore.instance
+            .collection('usersData')
+            .document(r.documentID)
+            .get()
+            .then((v) {
+          if (v['acctFullName'] == 'admin') {
+            adminId = v['userID'];
+            print("admin : $adminId");
+          }
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -152,10 +178,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.chat),
                 color: Colors.white,
                 onPressed: () {
-                  Navigator.of(context)
-                      .push(CupertinoPageRoute(builder: (BuildContext context) {
-                    return Messages();
-                  }));
+                  print(userId);
+                  if (userId == adminId) {
+                    Navigator.of(context).push(
+                        CupertinoPageRoute(builder: (BuildContext context) {
+                      return AdminScreen(
+                        userId: adminId,
+                        peerAvatar: "",
+                      );
+                    }));
+                  } else if (acctName == 'Guest') {
+                    Navigator.of(context).push(
+                        CupertinoPageRoute(builder: (BuildContext context) {
+                      return Login();
+                    }));
+                  } else {
+                    Navigator.of(context).push(
+                        CupertinoPageRoute(builder: (BuildContext context) {
+                      return Chat(
+                        peerId: adminId,
+                        userId: userId,
+                        peerAvatar: "",
+                      );
+                    }));
+                  }
                 },
               ),
               CircleAvatar(
