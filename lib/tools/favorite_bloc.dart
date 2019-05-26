@@ -4,6 +4,8 @@ import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/dbModels/favorite.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class FavoriteBloc {
   static FavoriteBloc _favoriteBloc;
@@ -11,6 +13,7 @@ class FavoriteBloc {
   Store _lastProduct;
   PublishSubject<Favorite> _publishSubjectFav;
   PublishSubject<Store> _publishSubjectProduct;
+  AppMethods appMethod = FirebaseMethods();
 
   factory FavoriteBloc() {
     if (_favoriteBloc == null) _favoriteBloc = new FavoriteBloc._();
@@ -52,6 +55,7 @@ class FavoriteBloc {
   void removeProductofFav(Store product) async {
     _currentFavorite.removeProduct(product);
     _updateFavorite();
+    await appMethod.removeFavorite(product);
   }
 
   void removeAllProduct() async {

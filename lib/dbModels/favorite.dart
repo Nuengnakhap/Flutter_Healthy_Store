@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/tools/app_data.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
@@ -17,10 +19,17 @@ class Favorite {
 
   Future fetchFavorite() async {
     // List dd = await DBProvider(dbName: 'Cart').getAllDB();
-    // List fav = await appMethod.getFavorites();
-    // for (var item in dd) {
-    //   _product.add(item);
-    // }
+    List<DocumentSnapshot> fav = await appMethod.getFavs();
+
+    fav.forEach((f) {
+      _product.add(Store.items(
+        itemName: f.data[pro_name],
+        itemDesc: f.data[pro_desc],
+        itemImage: f.data[pro_image],
+        itemPrice: f.data[pro_price],
+        itemRating: f.data[pro_rating],
+      ));
+    });
   }
 
   void addProduct(Store product) async {
@@ -28,14 +37,20 @@ class Favorite {
     await appMethod.setFavorite(product);
   }
 
-  void removeProduct(Store product) async{
-    _product.remove(product);
-    await appMethod.removeFavorite(product);
+  void removeProduct(Store product) {
+    Store lst;
+    _product.forEach((f) {
+      if (f.itemName == product.itemName) {
+        lst = f;
+      }
+    });
+    _product.remove(lst);
   }
 
   void removeAllProduct() async {
-    Client _client = await DBProvider(dbName: 'Client').getLasted();
-    // await appMethod.setOrderHistory(order: _product, userID: _client.userUID);
+    _product.forEach((f) async {
+      await appMethod.removeFavorite(f);
+    });
     _product.clear();
   }
 

@@ -3,6 +3,7 @@ import 'package:store_app_proj/components/mostrating.dart';
 import 'package:store_app_proj/components/product_card.dart';
 import 'package:store_app_proj/components/searchbar.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
+import 'package:store_app_proj/tools/favorite_bloc.dart';
 
 class ListProduct extends StatefulWidget {
   List<Store> items;
@@ -13,10 +14,11 @@ class ListProduct extends StatefulWidget {
 }
 
 class ListProductState extends State<ListProduct> {
+  FavoriteBloc _favoriteBloc = FavoriteBloc();
   @override
   Widget build(BuildContext context) {
     List<Store> items = widget.items;
-    MediaQueryData queryData  = MediaQuery.of(context);
+    MediaQueryData queryData = MediaQuery.of(context);
     return Center(
       child: CustomScrollView(
         slivers: <Widget>[
@@ -51,10 +53,17 @@ class ListProductState extends State<ListProduct> {
           SliverGrid(
             // physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: (queryData.size.width/2)/270),
+                crossAxisCount: 2,
+                childAspectRatio: (queryData.size.width / 2) / 270),
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
+                bool checked = false;
+                _favoriteBloc.currentFavorite.products.where((fav) {
+                  if (fav.itemName == items.elementAt(index).itemName) {
+                    checked = true;
+                  }
+                });
                 return Card(
                   child: ProductCard(
                     product: Store.items(
@@ -64,6 +73,7 @@ class ListProductState extends State<ListProduct> {
                       itemRating: items.elementAt(index).itemRating,
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
+                    checked: checked,
                   ),
                 );
               },

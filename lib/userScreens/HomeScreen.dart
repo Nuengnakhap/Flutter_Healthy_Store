@@ -15,8 +15,6 @@ import 'package:store_app_proj/tools/progressdialog.dart';
 import 'package:store_app_proj/userScreens/order_history.dart';
 import 'favorites.dart';
 import 'adminChat.dart';
-import 'notifications.dart';
-import 'history.dart';
 import 'profile.dart';
 import 'delivery.dart';
 import 'about.dart';
@@ -54,6 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
   CartBloc _cartBloc = CartBloc();
 
   StreamController _productController;
+
+  bool isEditedProfile = false;
 
   @override
   void initState() {
@@ -157,7 +157,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -174,10 +173,11 @@ class _HomeScreenState extends State<HomeScreen> {
               if (acctName == 'Guest') {
                 checkIfLoggedIn();
               } else {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return FavoritesScreen();
-                }));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return FavoritesScreen();
+                  },
+                ));
               }
             },
           ),
@@ -250,22 +250,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: CircleAvatar(
                 child: Icon(
-                  Icons.notifications,
-                  color: Colors.white,
-                  size: 20.0,
-                ),
-              ),
-              title: Text('Order Notifications'),
-              onTap: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Notifications();
-                }));
-              },
-            ),
-            ListTile(
-              leading: CircleAvatar(
-                child: Icon(
                   Icons.history,
                   color: Colors.white,
                   size: 20.0,
@@ -290,10 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Text('Profile Settings'),
               onTap: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Profile();
-                }));
+                checkIfEditedProfile();
               },
             ),
             ListTile(
@@ -384,5 +365,15 @@ class _HomeScreenState extends State<HomeScreen> {
       _cartBloc.clearCart();
     }
     Navigator.pop(context);
+  }
+
+  checkIfEditedProfile() async {
+    if (isEditedProfile == false) {
+      bool res = await Navigator.of(context)
+          .push(CupertinoPageRoute(builder: (BuildContext context) => Profile()
+      ));
+      if (res == true) _asyncMethod();
+      return;
+    }
   }
 }

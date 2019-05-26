@@ -15,7 +15,6 @@ import 'package:flutter/services.dart';
 class FirebaseMethods implements AppMethods {
   Firestore firestore = Firestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  Client client = Client();
 
   @override
   Future<String> setAddress(
@@ -152,7 +151,7 @@ class FirebaseMethods implements AppMethods {
       if (user != null) {
         DocumentSnapshot userInfo = await getUserInfo(user.uid);
         await DBProvider(dbName: 'Client').newDB(Client(
-          userUID: userInfo[userID],
+          userUID: user.uid,
           fullName: userInfo[acctFullName],
           email: userInfo[userEmail],
           password: userInfo[userPassword],
@@ -220,7 +219,7 @@ class FirebaseMethods implements AppMethods {
       // var list = querySnapshot;
       // print(list);
       if (_client != null) {
-        var orders = Orders(lstOrd: order, user: _client.userUID);
+        var orders = Orders(lstOrd: order, user: _client.fullName);
         await firestore
             .collection('orderHistory')
             .document()
@@ -236,13 +235,8 @@ class FirebaseMethods implements AppMethods {
   @override
   Stream<QuerySnapshot> getOrderHistory() {
     try {
-      checkLastUser();
-      if (client != null) {
-        return firestore
-            .collection(usersData)
-            .document(client.userUID)
-            .collection('orderHistory')
-            .snapshots();
+      if (auth.currentUser() != null) {
+        return firestore.collection('orderHistory').snapshots();
       }
     } catch (e) {
       print(e.message);
@@ -250,38 +244,27 @@ class FirebaseMethods implements AppMethods {
     return null;
   }
 
-  checkLastUser() async {
-    client = await DBProvider(dbName: 'Client').getLasted();
-  }
-
-  @override
-  Stream<QuerySnapshot> getFavorites() {
-    try {
-      checkLastUser();
-      if (client != null) {
-        return firestore
-            .collection(usersData)
-            .document(client.userUID)
-            .collection('orderHistory')
-            .snapshots();
-      }
-    } catch (e) {
-      print(e.message);
-    }
-    return null;
+  Future checkLastUser() async {
+    return await DBProvider(dbName: 'Client').getLasted();
   }
 
   @override
   Future<String> setFavorite(Store product) async {
     try {
-      checkLastUser();
-      if (client != null) {
+      Client _client = await checkLastUser();
+      if (_client != null) {
         await firestore
             .collection(prefix0.usersData)
-            .document(client.userUID)
+            .document(_client.userUID)
             .collection('favorites')
             .document(product.itemName)
-            .setData({'item': product.itemName});
+            .setData({
+          prefix0.pro_name: product.itemName,
+          prefix0.pro_image: product.itemImage,
+          prefix0.pro_price: product.itemPrice,
+          prefix0.pro_desc: product.itemDesc,
+          prefix0.pro_rating: product.itemRating,
+        });
         return successfulMSG();
       }
     } catch (e) {
@@ -293,11 +276,11 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<String> removeFavorite(Store product) async {
     try {
-      checkLastUser();
-      if (client != null) {
+      Client _client = await checkLastUser();
+      if (_client != null) {
         await firestore
             .collection(prefix0.usersData)
-            .document(client.userUID)
+            .document(_client.userUID)
             .collection('favorites')
             .document(product.itemName)
             .delete();
@@ -326,47 +309,37 @@ class FirebaseMethods implements AppMethods {
         phoneNumber: phone,
         photoURL: '',
       });
-      // List result =
-      //     await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
-      //         .getAllDB();
-      // for (Client item in result) {
-      //   print(item.toMap());
-      // }
+      Client client = await checkLastUser();
+      client.fullName = fullname;
+      client.phone = phone;
+      client.password = password;
+      client.email = email;
+      await DBProvider(dbName: 'Client').updateDB(client);
     } on PlatformException catch (e) {
       return errorMSG(e.message);
     }
-
     return user == null ? errorMSG('Error') : successfulMSG();
   }
 
   @override
-  Future<DocumentSnapshot> getFavs() async {
+  Future<List<DocumentSnapshot>> getFavs() async {
+    Client _client = await checkLastUser();
     try {
-      checkLastUser();
-      if (client != null) {
-        return await firestore
+      if (_client != null) {
+        List<DocumentSnapshot> dd;
+        await firestore
             .collection(usersData)
-            .document(client.userUID)
-            .collection('orderHistory')
-            .document(client.userUID)
-            .get();
+            .document(_client.userUID)
+            .collection('favorites')
+            .getDocuments()
+            .then((f) {
+          dd = f.documents;
+        });
+        return dd;
       }
     } catch (e) {
       print(e.message);
     }
     return null;
-  }
-  
-  @override
-  getLastedUser() async {
-    try {
-      checkLastUser();
-      if (client != null) {
-        return client.userUID;
-      }
-    } catch (e) {
-      return errorMSG(e.message);
-    }
-    return errorMSG('error');
   }
 }

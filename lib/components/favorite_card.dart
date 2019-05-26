@@ -10,17 +10,16 @@ import 'package:store_app_proj/tools/favorite_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/userScreens/item_details.dart';
 
-class ProductCard extends StatefulWidget {
+class FavoriteCard extends StatefulWidget {
   Store product;
-  bool checked = false;
-  ProductCard({Key key, @required this.product, @required this.checked})
+  FavoriteCard({Key key, @required this.product})
       : super(key: key);
 
   @override
-  _ProductCardState createState() => _ProductCardState();
+  _FavoriteCardState createState() => _FavoriteCardState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _FavoriteCardState extends State<FavoriteCard> {
   AppMethods appMethod = FirebaseMethods();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
 
@@ -162,27 +161,13 @@ class _ProductCardState extends State<ProductCard> {
                         fontSize: 20.0),
                   ),
                   IconButton(
-                    icon: !widget.checked
-                        ? Icon(
-                            Icons.favorite_border,
-                            color: Colors.teal,
-                            // size: 16.0,
-                          )
-                        : Icon(
+                    icon: Icon(
                             Icons.favorite,
                             color: Colors.teal,
                             // size: 16.0,
                           ),
                     onPressed: () {
-                      if (!widget.checked) {
-                        _favoriteBloc.addProductToFavorite(widget.product);
-                        widget.checked = true;
-                      } else {
-                        _favoriteBloc.removeProductofFav(widget.product);
-                        widget.checked = false;
-                      }
-                      setState(() { 
-                      });
+                      _favoriteBloc.removeProductofFav(widget.product);
                     },
                   ),
                 ],
