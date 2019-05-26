@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'chat.dart';
 
+Color orange = Color(0xFFffb84d);
+
 class AdminScreen extends StatefulWidget {
   final String peerAvatar;
   final String userId;
@@ -138,7 +140,7 @@ class AdminScreenState extends State<AdminScreen> {
                   });
                 });
               },
-              color: Colors.yellow,
+              color: orange,
               padding: EdgeInsets.fromLTRB(25.0, 10.0, 25.0, 10.0),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),

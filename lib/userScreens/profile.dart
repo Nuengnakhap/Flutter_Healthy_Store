@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import '../tools/app_tools.dart';
 import '../tools/app_data.dart';
+import 'package:http/http.dart' as http;
 
 class Profile extends StatefulWidget {
   @override
@@ -79,6 +85,19 @@ class _ProfileState extends State<Profile> {
               textIcon: Icons.lock,
               controller: re_password,
             ),
+            SizedBox(
+              height: 30.0,
+            ),
+            IconButton(
+              icon: Icon(Icons.add_a_photo),
+              color: Colors.white,
+              onPressed: () {
+                _choose();
+              },
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
             appButton(
               btnTxt: 'Submit',
               btnPadding: 18.0,
@@ -129,5 +148,31 @@ class _ProfileState extends State<Profile> {
       closeProgressDialog(context);
       showSnackbar(response, scaffoldkey);
     }
+  }
+
+  final String phpEndPoint = 'http://onezlinks.com/images/image.php';
+  File file;
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  void _choose() async {
+    file = await ImagePicker.pickImage(source: ImageSource.gallery);
+  }
+
+  void _upload() async {
+    FirebaseUser user = await auth.currentUser();
+    if (file == null) return;
+    String base64Image = base64Encode(file.readAsBytesSync());
+    String userId = user.uid;
+    print(userId);
+    print(base64Image);
+
+    // http.post(phpEndPoint, body: {
+    //   "image": base64Image,
+    //   "userID": userId,
+    // }).then((res) {
+    //   print(res.statusCode);
+    // }).catchError((err) {
+    //   print(err);
+    // });
   }
 }
