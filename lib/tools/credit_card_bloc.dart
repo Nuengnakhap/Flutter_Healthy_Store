@@ -45,7 +45,6 @@ class CreditCardBloc {
   }
 
   void ccFormat(String s) {
-    print(s);
     ccInputSink.add(s);
   }
 

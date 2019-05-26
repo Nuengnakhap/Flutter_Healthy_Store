@@ -196,4 +196,61 @@ class FirebaseMethods implements AppMethods {
   checkLastUser() async {
     client = await DBProvider(dbName: 'Client').getLasted();
   }
+
+  @override
+  Stream<QuerySnapshot> getFavorites() {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return firestore
+            .collection(usersData)
+            .document(client.userUID)
+            .collection('orderHistory')
+            .snapshots();
+      }
+    } catch (e) {
+      print(e.message);
+    }
+    return null;
+  }
+
+  @override
+  Future<String> setFavorite(Store product) async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        await firestore
+            .collection(prefix0.usersData)
+            .document(client.userUID)
+            .collection('favorites')
+            .document(product.itemName)
+            .setData({
+              'item': product.itemName
+            });
+        return successfulMSG();
+      }
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return errorMSG('error');
+  }
+
+  @override
+  Future<String> removeFavorite(Store product) async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        await firestore
+            .collection(prefix0.usersData)
+            .document(client.userUID)
+            .collection('favorites')
+            .document(product.itemName)
+            .delete();
+        return successfulMSG();
+      }
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return null;
+  }
 }

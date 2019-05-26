@@ -523,8 +523,6 @@ class _ItemDetailState extends State<ItemDetail> {
                         click == 0 ? click = 1 : click = 0;
                       });
                       if (favList == null || favList.length == 0) {
-                        print(favList);
-                        print("1111111");
                         _store
                             .collection("usersData")
                             .document(uid)
@@ -534,7 +532,6 @@ class _ItemDetailState extends State<ItemDetail> {
                           'T/F': 1
                         });
                       } else {
-                        print("22222222");
                         check = 0;
                         for (int i = 0; i < favList.length; i++) {
                           if (favList[i] ==

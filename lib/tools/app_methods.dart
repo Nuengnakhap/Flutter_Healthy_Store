@@ -12,4 +12,7 @@ abstract class AppMethods {
   Future<String> setAddress({String userId, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longtitude});
   Future<String> setOrderHistory({List<Order> order, String userID});
   Stream<QuerySnapshot> getOrderHistory();
+  Future<String> setFavorite(Store product);
+  Stream<QuerySnapshot> getFavorites();
+  Future<String> removeFavorite(Store product);
 }
