@@ -196,4 +196,35 @@ class FirebaseMethods implements AppMethods {
   checkLastUser() async {
     client = await DBProvider(dbName: 'Client').getLasted();
   }
+
+  @override
+  Future<String> updateUserAccount(
+      {String fullname, String phone, String email, String password}) async {
+    FirebaseUser user;
+    try {
+      user = await auth.currentUser();
+      if (user != null) {
+        user.updateEmail(email);
+        user.updatePassword(password);
+      }
+      await firestore.collection(usersData).document(user.uid).updateData({
+        userID: user.uid,
+        acctFullName: fullname,
+        userEmail: email,
+        userPassword: password,
+        phoneNumber: phone,
+        photoURL: '',
+      });
+      // List result =
+      //     await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+      //         .getAllDB();
+      // for (Client item in result) {
+      //   print(item.toMap());
+      // }
+    } on PlatformException catch (e) {
+      return errorMSG(e.message);
+    }
+
+    return user == null ? errorMSG('Error') : successfulMSG();
+  }
 }
