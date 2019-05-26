@@ -1,12 +1,12 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
+<<<<<<< HEAD
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
+=======
+>>>>>>> b2e744460e9b5b5ba81ba96945cb268f90bf0cc1
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
@@ -56,7 +56,7 @@ class _DeliveryState extends State<Delivery> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          item.data["addressName"],
+                          item.data["addressname"],
                           textAlign: TextAlign.left,
                         ),
                         Row(
@@ -67,7 +67,12 @@ class _DeliveryState extends State<Delivery> {
                                   "Edit",
                                   style: TextStyle(fontWeight: FontWeight.w700),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).push(CupertinoPageRoute(
+                                      builder: (BuildContext context) {
+                                    return AddressPicker.update(item);
+                                  }));
+                                },
                               ),
                             ),
                             Expanded(
@@ -80,7 +85,7 @@ class _DeliveryState extends State<Delivery> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 onPressed: () async {
-                                  item.reference.delete();
+                                  await item.reference.delete();
                                 },
                               ),
                             )
