@@ -7,7 +7,12 @@ import 'chat.dart';
 class AdminScreen extends StatefulWidget {
   final String peerAvatar;
   final String userId;
-  AdminScreen({Key key, @required this.userId, @required this.peerAvatar})
+  final String adminId;
+  AdminScreen(
+      {Key key,
+      @required this.userId,
+      @required this.peerAvatar,
+      @required this.adminId})
       : super(key: key);
   @override
   State<StatefulWidget> createState() {
@@ -110,6 +115,7 @@ class AdminScreenState extends State<AdminScreen> {
                           peerId: document.documentID,
                           userId: widget.userId,
                           peerAvatar: document.data['photoURL'],
+                          adminId: widget.adminId,
                         ),
                   ),
                 );

@@ -43,8 +43,10 @@ class _FavoritesState extends State<Favorites> {
                       return Column(
                         children: <Widget>[
                           ListTile(
-                            title: Text(snapshot.data.elementAt(index).itemName),
-                            subtitle: Text(snapshot.data.elementAt(index).itemName),
+                            title:
+                                Text(snapshot.data.elementAt(index).itemName),
+                            subtitle:
+                                Text(snapshot.data.elementAt(index).itemName),
                             onTap: () {
                               print(
                                   "tab on ${snapshot.data.elementAt(index).itemName}");

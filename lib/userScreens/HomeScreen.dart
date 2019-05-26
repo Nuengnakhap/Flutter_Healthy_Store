@@ -78,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future fetchProduct() async {
-    final response = await http.get(
-        'http://onezlinks.com:8090/files/product.json');
+    final response =
+        await http.get('http://onezlinks.com:8090/files/product.json');
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
@@ -186,6 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return AdminScreen(
                         userId: adminId,
                         peerAvatar: "",
+                        adminId: adminId,
                       );
                     }));
                   } else if (acctName == 'Guest') {
@@ -197,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         peerId: adminId,
                         userId: userId,
                         peerAvatar: "",
+                        adminId: adminId,
                       );
                     }));
                   }
