@@ -438,11 +438,14 @@ class _ItemDetailState extends State<ItemDetail> {
             children: <Widget>[
               Container(
                 width: (screenSize.width - 20) / 2,
-                child: Text(
-                  "ADD TO FAVORITES",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700),
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Text(
+                    "ADD TO FAVORITES",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
               Container(
