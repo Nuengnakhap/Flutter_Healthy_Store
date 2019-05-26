@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:store_app_proj/components/mostrating.dart';
 import 'package:store_app_proj/components/product_card.dart';
-import 'package:store_app_proj/components/searchbar.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
+import 'package:store_app_proj/dbModels/favorite.dart';
 
 class ListProductFav extends StatefulWidget {
-  List<Store> items;
+  Favorite items;
 
   ListProductFav({Key key, this.items}) : super(key: key);
 
@@ -17,7 +16,7 @@ class ListProductFavState extends State<ListProductFav> {
   int favWant = 1;
   @override
   Widget build(BuildContext context) {
-    List<Store> items = widget.items;
+    List<Store> items = widget.items.products;
     return Center(
       child: CustomScrollView(
         slivers: <Widget>[

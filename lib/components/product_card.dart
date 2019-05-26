@@ -5,13 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
-import 'package:store_app_proj/dbModels/client.dart';
-import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/favorite_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/userScreens/favorites.dart';
 import 'package:store_app_proj/userScreens/item_details.dart';
-import 'package:store_app_proj/userScreens/login.dart';
 
 class ProductCard extends StatefulWidget {
   Store product;
@@ -28,60 +26,28 @@ class _ProductCardState extends State<ProductCard> {
   AppMethods appMethod = FirebaseMethods();
   Firestore _store = Firestore.instance;
   List<String> favList = List();
+  FavoriteBloc _favoriteBloc = FavoriteBloc();
+
   int click = 0;
-  Client _client;
-  String acctName = 'Guest';
-  String acctEmail = '';
-  String acctPhotoUrl = '';
-  String uid;
-  bool isLoggedIn = false;
+
   @override
   void initState() {
     super.initState();
-    _asyncMethod().then((v) {
-      getFav();
-      getClick();
-    });
-
-    print(widget.userId);
-    // setState(() {
-
-    // });
-  }
-
-  Future _asyncMethod() async {
-    _client = await DBProvider(dbName: 'Client').getLasted();
-    if (_client != null) {
-      setState(() {
-        acctName = _client.fullName;
-        acctEmail = _client.email;
-        acctPhotoUrl = _client.photo;
-        isLoggedIn = _client.logged;
-        uid = _client.userUID;
-      });
-    } else {
-      setState(() {
-        acctName = 'Guest';
-        acctEmail = '';
-        acctPhotoUrl = '';
-        isLoggedIn = false;
-        uid = "";
-      });
-    }
-    setState(() {});
+    getFav();
+    getClick();
   }
 
   Future getFav() async {
     await Firestore.instance
         .collection('usersData')
-        .document(uid)
+        .document(widget.userId)
         .collection('favorites')
         .snapshots()
         .forEach((r) {
-      r.documents.forEach((k) {
-        Firestore.instance
+      r.documents.forEach((k) async {
+        await Firestore.instance
             .collection('usersData')
-            .document(uid)
+            .document(widget.userId)
             .collection('favorites')
             .document(k.documentID)
             .get()
@@ -89,7 +55,6 @@ class _ProductCardState extends State<ProductCard> {
           setState(() {
             this.favList.add(v['item'].toString());
           });
-          print(v['item']);
         });
       });
     });
@@ -98,7 +63,7 @@ class _ProductCardState extends State<ProductCard> {
   Future getClick() {
     _store
         .collection('usersData')
-        .document(uid)
+        .document(widget.userId)
         .collection('favorites')
         .where('item', isEqualTo: "${widget.product.itemName.toString()}")
         .getDocuments()
@@ -113,7 +78,7 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    int check = 0;
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -262,73 +227,16 @@ class _ProductCardState extends State<ProductCard> {
                             // size: 16.0,
                           ),
                     onPressed: () {
-                      if (acctName == 'Guest') {
-                        checkIfLoggedIn();
+                      
+                      if (click == 0) {
+                        _favoriteBloc.addProductToFavorite(widget.product);
                       } else {
-                        setState(() {
-                          click == 0 ? click = 1 : click = 0;
-                        });
-                        if (favList == null || favList.length == 0) {
-                          print(favList);
-                          print("1111111");
-                          _store
-                              .collection("usersData")
-                              .document(uid)
-                              .collection("favorites")
-                              .add({
-                            'item': "${widget.product.itemName.toString()}",
-                            'T/F': 1
-                          });
-                        } else {
-                          print("22222222");
-                          check = 0;
-                          for (int i = 0; i < favList.length; i++) {
-                            if (favList[i] ==
-                                widget.product.itemName.toString()) {
-                              _store
-                                  .collection("usersData")
-                                  .document(uid)
-                                  .collection("favorites")
-                                  .where('item',
-                                      isEqualTo:
-                                          "${widget.product.itemName.toString()}")
-                                  .getDocuments()
-                                  .then((onValue) {
-                                onValue.documents.forEach((f) {
-                                  _store
-                                      .collection("usersData")
-                                      .document(uid)
-                                      .collection('favorites')
-                                      .document(f.documentID)
-                                      .setData({
-                                    'item': widget.product.itemName.toString(),
-                                    'T/F': f['T/F'] == 0 ? 1 : 0
-                                  });
-                                });
-                              });
-                              check = 1;
-                            }
-                          }
-                          if (check == 0) {
-                            _store
-                                .collection("usersData")
-                                .document(uid)
-                                .collection('favorites')
-                                .add({
-                              'item': "${widget.product.itemName.toString()}",
-                              'T/F': 1
-                            });
-                          }
-                        }
-
-                        if (widget.favWant == 1) {
-                          Navigator.of(context).push(
-                              NoAnimationMaterialPageRoute(
-                                  builder: (BuildContext context) {
-                            return FavoritesScreen();
-                          }));
-                        }
+                        _favoriteBloc.removeProductofFav(widget.product);
                       }
+                      setState(() {
+                        click == 0 ? click = 1 : click = 0;
+                      });
+
                     },
                   ),
                 ],
@@ -338,18 +246,6 @@ class _ProductCardState extends State<ProductCard> {
         ),
       ),
     );
-  }
-
-  checkIfLoggedIn() async {
-    if (isLoggedIn == false) {
-      bool response = await Navigator.of(context)
-          .push(CupertinoPageRoute(builder: (BuildContext context) => Login()));
-      if (response == true) _asyncMethod();
-      return;
-    }
-    bool response = await appMethod.logoutUser();
-    if (response == true) _asyncMethod();
-    Navigator.pop(context);
   }
 }
 

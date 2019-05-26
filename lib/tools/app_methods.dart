@@ -14,5 +14,8 @@ abstract class AppMethods {
   Future<DocumentSnapshot> getUserInfo(String userId);
   Future<String> setAddress({String addressName, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longitude});
   Stream<QuerySnapshot> getOrderHistory();
+  Future<String> setFavorite(Store product);
+  Stream<QuerySnapshot> getFavorites();
+  Future<String> removeFavorite(Store product);
   Future<String> setOrderHistory({List<Order> order, String userID});
 }

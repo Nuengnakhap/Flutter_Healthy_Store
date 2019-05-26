@@ -9,6 +9,7 @@ import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'package:store_app_proj/userScreens/order_history.dart';
@@ -50,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<String> favList = List();
   AppMethods appMethod = FirebaseMethods();
 
+  CartBloc _cartBloc = CartBloc();
+
   StreamController _productController;
 
   @override
@@ -59,8 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _productController = StreamController();
     loadProducts();
     getIdAdmin();
-    getFav();
-    print("Home : $favList");
   }
 
   Future _asyncMethod() async {
@@ -150,33 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
             .then((v) {
           if (v['acctFullName'] == 'admin') {
             adminId = v['userID'];
-            print("admin : $adminId");
           }
         });
       });
     });
   }
 
-  Future getFav() async {
-    await Firestore.instance
-        .collection('usersData')
-        .document(userId)
-        .collection('favorites')
-        .snapshots()
-        .forEach((r) {
-      r.documents.forEach((r) {
-        Firestore.instance
-            .collection('usersData')
-            .document(userId)
-            .collection('favorites')
-            .document(r.documentID)
-            .get()
-            .then((v) {
-          this.favList.add(v['item'].toString());
-        });
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -213,6 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.of(context).push(
                         CupertinoPageRoute(builder: (BuildContext context) {
                       return AdminScreen(
+                        adminId: adminId,
                         userId: adminId,
                         peerAvatar: "",
                       );
@@ -248,7 +229,6 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
-            print('favList : $favList');
             return ListProduct(items: snapshot.data, userId: userId);
           } else {
             return Center(child: ProgressDialog());
@@ -401,6 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
     bool response = await appMethod.logoutUser();
     if (response == true) {
       _asyncMethod();
+      _cartBloc.clearCart();
     }
     Navigator.pop(context);
   }
