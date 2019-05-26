@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
@@ -12,18 +13,57 @@ class FirebaseMethods implements AppMethods {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
-  Future<String> setAddress({String userId, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longtitude}) async {
+  Future<String> setAddress(
+      {String addressName,
+      String fullname,
+      String phone,
+      String address,
+      String province,
+      String district,
+      String zipcode,
+      double latitude,
+      double longitude}) async {
     try {
-      await firestore.collection(usersData).document(userId).collection('address').document().setData({
-        fullname: fullname,
-        phone: phone,
-        address: address,
-        province: province,
-        district: district,
-        zipcode: zipcode,
-        location: GeoPoint(latitude, longtitude),
+      await auth.currentUser().then((user) async {
+        await firestore
+            .collection(usersData)
+            .document(user.uid)
+            .collection('address')
+            .document()
+            .setData({
+          "addressName": addressName,
+          "fullname": fullname,
+          "phone": phone,
+          "address": address,
+          "province": province,
+          "district": district,
+          "zipcode": zipcode,
+          "location": GeoPoint(latitude, longitude),
+        });
       });
+      return null;
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+  }
 
+  Stream<QuerySnapshot> getAddress(String uid) {
+    return firestore
+        .collection(usersData)
+        .document(uid)
+        .collection('address')
+        .snapshots();
+  }
+
+  Future<String> removeAddress(String uid, String aid) {
+    try {
+      firestore
+          .collection(usersData)
+          .document(uid)
+          .collection('address')
+          .document(aid)
+          .delete();
+      return null;
     } catch (e) {
       return errorMSG(e.message);
     }
@@ -75,8 +115,7 @@ class FirebaseMethods implements AppMethods {
           email: email, password: password);
       if (user != null) {
         DocumentSnapshot userInfo = await getUserInfo(user.uid);
-        await DBProvider(dbName: 'Client')
-            .newDB(Client(
+        await DBProvider(dbName: 'Client').newDB(Client(
           userUID: userInfo[userID],
           fullName: userInfo[acctFullName],
           email: userInfo[userEmail],

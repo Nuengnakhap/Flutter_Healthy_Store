@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class AddressPicker extends StatefulWidget {
   @override
@@ -14,6 +13,7 @@ class _AddressPickerState extends State<AddressPicker> {
   Completer<GoogleMapController> _controller = Completer();
   CameraPosition _lastMapPosition = start;
   Set<Marker> _markers = {};
+  FirebaseMethods appMethods = FirebaseMethods();
   final _formKey = GlobalKey<FormState>();
   TextEditingController addressName = TextEditingController();
   TextEditingController fullName = TextEditingController();
@@ -22,6 +22,8 @@ class _AddressPickerState extends State<AddressPicker> {
   TextEditingController province = TextEditingController();
   TextEditingController district = TextEditingController();
   TextEditingController zipCode = TextEditingController();
+
+  
 
   void addMarker() {
     setState(() {
@@ -39,25 +41,29 @@ class _AddressPickerState extends State<AddressPicker> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            contentPadding: EdgeInsets.all(12),
+            title: Text("Fill this information"),
+            titlePadding: EdgeInsets.all(12),
             content: Form(
               key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+              child: ListView(
                 children: <Widget>[
                   TextFormField(
                     controller: addressName,
-                    decoration: InputDecoration(labelText: "Address Name", helperText: "Home or Work place"),
+                    decoration: InputDecoration(
+                        labelText: "Address Name",
+                        helperText: "Ex: Home or Work place"),
                     validator: (value) {
-                      if(value.isEmpty) {
+                      if (value.isEmpty) {
                         return "Please fill out this form";
                       }
                     },
                   ),
                   TextFormField(
                     controller: fullName,
-                    decoration: InputDecoration(labelText: "Full Name"),
+                    decoration: InputDecoration(labelText: "Reciever Name"),
                     validator: (value) {
-                      if(value.isEmpty) {
+                      if (value.isEmpty) {
                         return "Please fill out this form";
                       }
                     },
@@ -66,7 +72,9 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: phone,
                     decoration: InputDecoration(labelText: "Phone number"),
                     validator: (value) {
-                      if(value.length != 10) {
+                      if (value.isEmpty) {
+                        return "Please fill out this form";
+                      } else if (value.length > 10) {
                         return "This in not a phone number";
                       }
                     },
@@ -75,16 +83,7 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: address,
                     decoration: InputDecoration(labelText: "Address"),
                     validator: (value) {
-                      if(value.isEmpty) {
-                        return "Please fill out this form";
-                      }
-                    },
-                  ),
-                  TextFormField(
-                    controller: province,
-                    decoration: InputDecoration(labelText: "Province"),
-                    validator: (value) {
-                      if(value.isEmpty) {
+                      if (value.isEmpty) {
                         return "Please fill out this form";
                       }
                     },
@@ -93,7 +92,16 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: district,
                     decoration: InputDecoration(labelText: "Distict"),
                     validator: (value) {
-                      if(value.isEmpty) {
+                      if (value.isEmpty) {
+                        return "Please fill out this form";
+                      }
+                    },
+                  ),
+                  TextFormField(
+                    controller: province,
+                    decoration: InputDecoration(labelText: "Province"),
+                    validator: (value) {
+                      if (value.isEmpty) {
                         return "Please fill out this form";
                       }
                     },
@@ -102,7 +110,7 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: zipCode,
                     decoration: InputDecoration(labelText: "Zip Code"),
                     validator: (value) {
-                      if(value.length != 5) {
+                      if (value.length != 5) {
                         return "This is not a zip code";
                       }
                     },
@@ -115,14 +123,20 @@ class _AddressPickerState extends State<AddressPicker> {
                           color: Colors.white, fontWeight: FontWeight.w700),
                     ),
                     onPressed: () async {
-                      _formKey.currentState.validate();
-                      Firestore firestore = Firestore.instance;
-                      FirebaseAuth user = FirebaseAuth.instance;
-                      print(user.currentUser());
-                          // var a = firestore.collection("userData").document("user.uid").collection(ชื่อ).document(ชื่อ doc).get();
-                      // print(a);
-
-                      print(_markers.elementAt(0).position);
+                      if (_formKey.currentState.validate()) {
+                        await appMethods.setAddress(
+                          addressName: addressName.text,
+                          fullname: fullName.text,
+                          phone: phone.text,
+                          address: address.text,
+                          province: province.text,
+                          district: district.text,
+                          zipcode: zipCode.text,
+                          latitude: _markers.elementAt(0).position.latitude,
+                          longitude: _markers.elementAt(0).position.longitude,
+                        );
+                        Navigator.pushReplacementNamed(context, "/");
+                      }
                     },
                   )
                 ],
