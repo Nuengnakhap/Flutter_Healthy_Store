@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/tools/address_picker.dart';
 
 class Delivery extends StatefulWidget {
   @override
@@ -12,10 +16,19 @@ class _DeliveryState extends State<Delivery> {
       appBar: AppBar(
         title: Text('Delivery Address'),
         centerTitle: false,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context)
+                  .push(CupertinoPageRoute(builder: (BuildContext context) {
+                return AddressPicker();
+              }));
+            },
+          )
+        ],
       ),
-      body: Center(
-        child: Text('Delivery Address'),
-      ),
+      body: Text(""),
     );
   }
 }
