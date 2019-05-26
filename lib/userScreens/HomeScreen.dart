@@ -9,7 +9,6 @@ import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
-import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'package:store_app_proj/userScreens/order_history.dart';
@@ -48,11 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String id;
   String peer;
   String groupchatId;
+  List<String> favList = List();
   AppMethods appMethod = FirebaseMethods();
 
   StreamController _productController;
-  
-  CartBloc _cartBloc = CartBloc();
 
   @override
   void initState() {
@@ -61,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _productController = StreamController();
     loadProducts();
     getIdAdmin();
+    getFav();
+    print("Home : $favList");
   }
 
   Future _asyncMethod() async {
@@ -157,6 +157,27 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future getFav() async {
+    await Firestore.instance
+        .collection('usersData')
+        .document(userId)
+        .collection('favorites')
+        .snapshots()
+        .forEach((r) {
+      r.documents.forEach((r) {
+        Firestore.instance
+            .collection('usersData')
+            .document(userId)
+            .collection('favorites')
+            .document(r.documentID)
+            .get()
+            .then((v) {
+          this.favList.add(v['item'].toString());
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -170,10 +191,14 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.favorite),
             color: Colors.white,
             onPressed: () {
-              Navigator.of(context)
-                  .push(CupertinoPageRoute(builder: (BuildContext context) {
-                return Favorites();
-              }));
+              if (acctName == 'Guest') {
+                checkIfLoggedIn();
+              } else {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (BuildContext context) {
+                  return FavoritesScreen();
+                }));
+              }
             },
           ),
           Stack(
@@ -190,7 +215,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       return AdminScreen(
                         userId: adminId,
                         peerAvatar: "",
-                        adminId: adminId,
                       );
                     }));
                   } else if (acctName == 'Guest') {
@@ -202,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         peerId: adminId,
                         userId: userId,
                         peerAvatar: "",
-                        adminId: adminId,
                       );
                     }));
                   }
@@ -225,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
-            return ListProduct(items: snapshot.data);
+            print('favList : $favList');
+            return ListProduct(items: snapshot.data, userId: userId);
           } else {
             return Center(child: ProgressDialog());
           }
@@ -377,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
     bool response = await appMethod.logoutUser();
     if (response == true) {
       _asyncMethod();
-      _cartBloc.clearCart();
     }
     Navigator.pop(context);
   }
