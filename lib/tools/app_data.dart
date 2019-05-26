@@ -30,3 +30,12 @@ const String pro_image = "item_image";
 const String pro_rating = "item_rating";
 const String pro_desc = "item_desc";
 const String pro_quantity = "item_quantity";
+
+// address
+const String fullname = 'fullname';
+const String phone = 'phone';
+const String address = 'address';
+const String province = 'province';
+const String district = 'district';
+const String zipcode = 'zipcode';
+const String location = 'location';

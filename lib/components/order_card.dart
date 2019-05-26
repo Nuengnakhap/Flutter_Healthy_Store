@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/order.dart';
-import 'package:store_app_proj/tools/app_db.dart';
 import 'dart:math';
 
 import 'package:store_app_proj/tools/cart_bloc.dart';

@@ -3,6 +3,8 @@ import 'package:store_app_proj/dbModels/Store.dart';
 
 import 'dart:core';
 
+import 'package:store_app_proj/userScreens/item_details.dart';
+
 class DataSearch extends SearchDelegate<String> {
   List<Store> items;
   DataSearch({this.items});
@@ -38,28 +40,42 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final suggestionList = query.isEmpty
         ? recent
-        : items.where((p) => p.itemName.startsWith(query)).toList();
+        : items
+            .where(
+                (p) => p.itemName.toLowerCase().startsWith(query.toLowerCase()))
+            .toList();
     return ListView.builder(
-      itemBuilder: (context, index) => ListTile(
-            onTap: () {},
-            leading: Icon(Icons.shopping_cart),
-            title: RichText(
-              text: TextSpan(
-                  text:
-                      suggestionList[index].itemName.substring(0, query.length),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: [
-                    TextSpan(
-                        text: suggestionList[index]
-                            .itemName
-                            .substring(query.length),
-                        style: TextStyle(color: Colors.grey))
-                  ]),
-            ),
+      itemBuilder: (context, index) {
+        return ListTile(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return ItemDetail(
+                    product: suggestionList[index]
+                  );
+                },
+              ),
+            );
+          },
+          leading: Icon(Icons.shopping_cart),
+          title: RichText(
+            text: TextSpan(
+                text: suggestionList[index].itemName.substring(0, query.length),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+                children: [
+                  TextSpan(
+                      text: suggestionList[index]
+                          .itemName
+                          .substring(query.length),
+                      style: TextStyle(color: Colors.grey))
+                ]),
           ),
+        );
+      },
       itemCount: suggestionList.length,
     );
   }

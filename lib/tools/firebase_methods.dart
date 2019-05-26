@@ -12,6 +12,24 @@ class FirebaseMethods implements AppMethods {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
+  Future<String> setAddress({String userId, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longtitude}) async {
+    try {
+      await firestore.collection(usersData).document(userId).collection('address').document().setData({
+        fullname: fullname,
+        phone: phone,
+        address: address,
+        province: province,
+        district: district,
+        zipcode: zipcode,
+        location: GeoPoint(latitude, longtitude),
+      });
+
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+  }
+
+  @override
   Future<String> createUserAccount(
       {String fullname, String phone, String email, String password}) async {
     FirebaseUser user;

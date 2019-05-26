@@ -8,9 +8,10 @@ class ListProduct extends StatelessWidget {
   List<Store> items;
 
   ListProduct({Key key, this.items}) : super(key: key);
-
+  
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData  = MediaQuery.of(context);
     return Center(
       child: CustomScrollView(
         slivers: <Widget>[
@@ -45,7 +46,7 @@ class ListProduct extends StatelessWidget {
           SliverGrid(
             // physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: 175 / 260),
+                crossAxisCount: 2, childAspectRatio: (queryData.size.width/2)/270),
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {

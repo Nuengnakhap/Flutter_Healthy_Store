@@ -5,6 +5,8 @@ import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'dart:math';
 
+import 'package:store_app_proj/userScreens/credit_card.dart';
+
 class CartScreen extends StatefulWidget {
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -63,6 +65,35 @@ class _CartScreenState extends State<CartScreen> {
                       },
                     ),
                   ),
+                  Container(
+                    height: 50.0,
+                    color: Colors.white,
+                    child: new Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: new GestureDetector(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreditCardPage()));
+                        },
+                        child: new Container(
+                          width: double.infinity,
+                          margin: new EdgeInsets.only(
+                              left: 10.0, right: 10.0, bottom: 2.0),
+                          height: 50.0,
+                          decoration: new BoxDecoration(
+                              color: Colors.teal,
+                              borderRadius: new BorderRadius.all(
+                                  new Radius.circular(5.0))),
+                          child: new Center(
+                              child: new Text(
+                            "PROCEED TO PAYMENT",
+                            style: new TextStyle(
+                              color: Colors.white,
+                            ),
+                          )),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             );

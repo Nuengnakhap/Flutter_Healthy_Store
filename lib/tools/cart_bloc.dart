@@ -35,13 +35,19 @@ class CartBloc {
     _publishSubjectOrder.sink.add(_lastOrder);
   }
 
-  void addOrderToCart(Store product, int quantity) {
+  void addOrderToCart(Store product, int quantity) async {
     _lastOrder = Order(
       order_product: product,
       order_quantity: quantity,
       id: _orderId++,
     );
     _currentCart.addOrder(_lastOrder);
+    await DBProvider(dbName: 'Cart').newDB(
+      Order(
+        order_product: product,
+        order_quantity: quantity,
+      ),
+    );
     _updateLastOrder();
     _updateCart();
   }
@@ -55,6 +61,12 @@ class CartBloc {
         order_quantity: order.order_quantity,
       ),
     );
+    _updateCart();
+  }
+
+  void removeAllOrder() async {
+    _currentCart.removeAllOreder();
+    await DBProvider(dbName: 'Cart').deleteAll();
     _updateCart();
   }
 
