@@ -27,6 +27,10 @@ class Cart{
     _orders.remove(order);
   }
 
+  void removeAllOreder() {
+    _orders.clear();
+  }
+
   void updateOrder(Order order){
     for (var item in _orders) {
       if (item.id == order.id) {

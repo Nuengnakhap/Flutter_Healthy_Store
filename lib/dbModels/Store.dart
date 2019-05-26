@@ -26,7 +26,7 @@ class Store {
         itemName: json['name'].toString(),
         itemPrice: json['salePrice'] as double,
         itemImage: json['largeImage'].toString(),
-        itemRating: json['customerRating'].toString(),
+        itemRating: json['customerRating'].toString() == 'null' ? '0' : json['customerRating'].toString(),
         itemDesc: html2md.convert(unescape.convert(json['shortDescription'].toString())),
         category: json['categoryPath'].toString(),
       );

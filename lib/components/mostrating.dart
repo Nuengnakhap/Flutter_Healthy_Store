@@ -23,8 +23,7 @@ class _MostRatingState extends State<MostRating> {
     for (var item in widget.items) {
       newList.add(item);
     }
-    newList.sort((a, b) =>
-        double.parse(a.itemRating).compareTo(double.parse(b.itemRating)));
+    newList.sort((a, b) => double.parse(a.itemRating).compareTo(double.parse(b.itemRating)));
   }
 
   @override

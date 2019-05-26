@@ -450,12 +450,6 @@ class _ItemDetailState extends State<ItemDetail> {
                 child: GestureDetector(
                   onTap: () async {
                     _cartBloc.addOrderToCart(widget.product, _counter);
-                    await DBProvider(dbName: 'Cart').newDB(
-                      Order(
-                        order_product: widget.product,
-                        order_quantity: _counter,
-                      ),
-                    );
                     Navigator.pop(context);
                   },
                   child: Text(

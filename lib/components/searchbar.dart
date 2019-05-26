@@ -71,6 +71,7 @@ class _SearchBarState extends State<SearchBar> {
                               delegate: DataSearch(items: widget.items),
                               query: search.text,
                             );
+                            search.clear();
                           },
                         ),
                       ),
