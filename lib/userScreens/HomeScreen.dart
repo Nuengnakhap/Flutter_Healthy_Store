@@ -12,6 +12,7 @@ import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
+import 'package:store_app_proj/userScreens/order_history.dart';
 import 'favorites.dart';
 import 'adminChat.dart';
 import 'notifications.dart';
@@ -270,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.of(context)
                     .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return History();
+                  return OrderHistory();
                 }));
               },
             ),

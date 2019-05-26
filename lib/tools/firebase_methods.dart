@@ -1,5 +1,8 @@
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/dbModels/order.dart';
+import 'package:store_app_proj/dbModels/orders.dart';
+import 'package:store_app_proj/tools/app_data.dart' as prefix0;
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'dart:async';
@@ -11,6 +14,7 @@ import 'package:flutter/services.dart';
 class FirebaseMethods implements AppMethods {
   Firestore firestore = Firestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+  Client client = Client();
 
   @override
   Future<String> setAddress(
@@ -142,29 +146,54 @@ class FirebaseMethods implements AppMethods {
   }
 
   @override
-  Future<String> setOrderHistory({Store product, int quantity}) async {
+  Future<String> setOrderHistory({List<Order> order, String userID}) async {
     try {
       Client _client = await DBProvider(dbName: 'Client').getLasted();
+      // List orderID = List();
+      // QuerySnapshot querySnapshot = await Firestore.instance
+      //     .collection(usersData)
+      //     .document(_client.userUID)
+      //     .collection('orderHistory')
+      //     .getDocuments().then((onValue) {
+      //       onValue.documents.toList().forEach((f) {
+      //         orderID.add(f.documentID);
+      //       });
+      //     });
+      // print(orderID);
+      // var list = querySnapshot;
+      // print(list);
       if (_client != null) {
+        var orders = Orders(lstOrd: order, user: _client.userUID);
         await firestore
-            .collection(usersData)
-            .document(_client.userUID)
             .collection('orderHistory')
             .document()
-            .setData({
-          c_pro_name: product.itemName,
-          c_pro_price: product.itemPrice,
-          c_pro_image: product.itemImage,
-          c_pro_rating: product.itemRating,
-          c_pro_desc: product.itemDesc,
-          c_pro_quantity: quantity,
-        });
+            .setData(orders.toMap());
         return successfulMSG();
       }
-
     } catch (e) {
       return errorMSG(e.message);
     }
     return errorMSG('error');
+  }
+
+  @override
+  Stream<QuerySnapshot> getOrderHistory() {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return firestore
+            .collection(usersData)
+            .document(client.userUID)
+            .collection('orderHistory')
+            .snapshots();
+      }
+    } catch (e) {
+      print(e.message);
+    }
+    return null;
+  }
+
+  checkLastUser() async {
+    client = await DBProvider(dbName: 'Client').getLasted();
   }
 }

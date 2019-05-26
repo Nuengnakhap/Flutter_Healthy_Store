@@ -1,12 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/tools/app_data.dart' as prefix0;
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 
-class Oder_History extends StatefulWidget {
-  final String toolbarname;
-
-  Oder_History({Key key, this.toolbarname}) : super(key: key);
+class OrderHistory extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => oder_history(toolbarname);
+  State<StatefulWidget> createState() => _OrderHistoryState();
 }
 
 class Item {
@@ -28,12 +29,15 @@ class Item {
       this.cancelOder});
 }
 
-class oder_history extends State<Oder_History> {
+class _OrderHistoryState extends State<OrderHistory> {
+
+  AppMethods appMethods = FirebaseMethods();
+
   List list = ['12', '11'];
   bool checkboxValueA = true;
   bool checkboxValueB = false;
   bool checkboxValueC = false;
-  VoidCallback _showBottomSheetCallback;
+  
   List<Item> itemList = <Item>[
     Item(
         name: 'Jhone Miller',
@@ -77,26 +81,10 @@ class oder_history extends State<Oder_History> {
         cancelOder: 'View Receipt'),
   ];
 
-  // String toolbarname = 'Fruiys & Vegetables';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String toolbarname;
-
-  oder_history(this.toolbarname);
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    IconData _backIcon() {
-      switch (Theme.of(context).platform) {
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-          return Icons.arrow_back;
-        case TargetPlatform.iOS:
-          return Icons.arrow_back_ios;
-      }
-      assert(false);
-      return null;
-    }
 
     var size = MediaQuery.of(context).size;
 
@@ -108,171 +96,167 @@ class oder_history extends State<Oder_History> {
     return new Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(_backIcon()),
-            alignment: Alignment.centerLeft,
-            tooltip: 'Back',
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(toolbarname),
-          backgroundColor: Colors.white,
+          title: Text('Order History'),
         ),
-        body: ListView.builder(
-            itemCount: itemList.length,
-            itemBuilder: (BuildContext cont, int ind) {
-              return SafeArea(
-                  child: Column(children: <Widget>[
-                Container(
-                    margin: EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
-                    color:Colors.black12,
-                    child: Card(
-                        elevation: 4.0,
-                        child: Container(
-                            padding: const EdgeInsets.fromLTRB(
-                                10.0, 10.0, 10.0, 10.0),
-                            child: GestureDetector(
-                                child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: <Widget>[
-                                // three line description
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    itemList[ind].name,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontStyle: FontStyle.normal,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-
-                                Container(
-                                  margin: EdgeInsets.only(top: 3.0),
-                                ),
-                                Container(
-                                  alignment: Alignment.topLeft,
-                                  child: Text(
-                                    'To Deliver On :' +
-                                        itemList[ind].deliveryTime,
-                                    style: TextStyle(
-                                        fontSize: 13.0, color: Colors.black54),
-                                  ),
-                                ),
-                                Divider(
-                                  height: 10.0,
-                                  color: Colors.amber.shade500,
-                                ),
-
-                                Row(
+        body: StreamBuilder<QuerySnapshot>(
+          stream: appMethods.getOrderHistory(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) return new Text("There is no expense");
+            return ListView.builder(
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (BuildContext cont, int index) {
+                  return SafeArea(
+                      child: Column(children: <Widget>[
+                    Container(
+                        margin: EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0),
+                        color:Colors.black12,
+                        child: Card(
+                            elevation: 4.0,
+                            child: Container(
+                                padding: const EdgeInsets.fromLTRB(
+                                    10.0, 10.0, 10.0, 10.0),
+                                child: GestureDetector(
+                                    child: Column(
                                   mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Container(
-                                        padding: EdgeInsets.all(3.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              'Order Id',
-                                              style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.black54),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 3.0),
-                                              child: Text(
-                                                itemList[ind].oderId,
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.black87),
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                    Container(
-                                        padding: EdgeInsets.all(3.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              'Order Amount',
-                                              style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.black54),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 3.0),
-                                              child: Text(
-                                                itemList[ind].oderAmount,
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.black87),
-                                              ),
-                                            ),
-                                          ],
-                                        )),
-                                    Container(
-                                        padding: EdgeInsets.all(3.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Text(
-                                              'Payment Type',
-                                              style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.black54),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 3.0),
-                                              child: Text(
-                                                itemList[ind].paymentType,
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.black87),
-                                              ),
-                                            )
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                                Divider(
-                                  height: 10.0,
-                                  color: Colors.amber.shade500,
-                                ),
-
-                                Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 20.0,
-                                        color: Colors.amber.shade500,
-                                    ),
-                                    Text(itemList[ind].address,
+                                    // three line description
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'TEST',
                                         style: TextStyle(
-                                            fontSize: 13.0,
-                                            color: Colors.black54)),
+                                          fontSize: 16.0,
+                                          fontStyle: FontStyle.normal,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3.0),
+                                    ),
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'To Deliver On :',
+                                        style: TextStyle(
+                                            fontSize: 13.0, color: Colors.black54),
+                                      ),
+                                    ),
+                                    Divider(
+                                      height: 10.0,
+                                      color: Colors.amber.shade500,
+                                    ),
+
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Container(
+                                            padding: EdgeInsets.all(3.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Order Id',
+                                                  style: TextStyle(
+                                                      fontSize: 13.0,
+                                                      color: Colors.black54),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 3.0),
+                                                  child: Text(
+                                                    snapshot.data.documents[index].documentID,
+                                                    style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        color: Colors.black87),
+                                                  ),
+                                                )
+                                              ],
+                                            )),
+                                        Container(
+                                            padding: EdgeInsets.all(3.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Order Amount',
+                                                  style: TextStyle(
+                                                      fontSize: 13.0,
+                                                      color: Colors.black54),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 3.0),
+                                                  child: Text(
+                                                    itemList[index].oderAmount,
+                                                    style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        color: Colors.black87),
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                        Container(
+                                            padding: EdgeInsets.all(3.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Payment Type',
+                                                  style: TextStyle(
+                                                      fontSize: 13.0,
+                                                      color: Colors.black54),
+                                                ),
+                                                Container(
+                                                  margin: EdgeInsets.only(top: 3.0),
+                                                  child: Text(
+                                                    itemList[index].paymentType,
+                                                    style: TextStyle(
+                                                        fontSize: 15.0,
+                                                        color: Colors.black87),
+                                                  ),
+                                                )
+                                              ],
+                                            )),
+                                      ],
+                                    ),
+                                    Divider(
+                                      height: 10.0,
+                                      color: Colors.amber.shade500,
+                                    ),
+
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 20.0,
+                                            color: Colors.amber.shade500,
+                                        ),
+                                        Text(itemList[index].address,
+                                            style: TextStyle(
+                                                fontSize: 13.0,
+                                                color: Colors.black54)),
+                                      ],
+                                    ),
+                                    Divider(
+                                      height: 10.0,
+                                      color: Colors.amber.shade500,
+                                    ),
+                                    Container(
+                                     child:_status(itemList[index].cancelOder)
+                                    )
                                   ],
-                                ),
-                                Divider(
-                                  height: 10.0,
-                                  color: Colors.amber.shade500,
-                                ),
-                                Container(
-                                 child:_status(itemList[ind].cancelOder)
-                                )
-                              ],
-                            ))))),
-              ]));
-            }));
+                                ))))),
+                  ]));
+                });
+          }
+        ));
   }
 
   _verticalDivider() => Container(
