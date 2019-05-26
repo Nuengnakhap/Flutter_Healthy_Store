@@ -4,17 +4,17 @@ import 'package:store_app_proj/components/product_card.dart';
 import 'package:store_app_proj/components/searchbar.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 
-class ListProduct extends StatefulWidget {
+class ListProductFav extends StatefulWidget {
   List<Store> items;
-  String userId;
-  ListProduct({Key key, this.items, this.userId}) : super(key: key);
+
+  ListProductFav({Key key, this.items}) : super(key: key);
 
   @override
-  ListProductState createState() => ListProductState();
+  ListProductFavState createState() => ListProductFavState();
 }
 
-class ListProductState extends State<ListProduct> {
-  int favWant = 0;
+class ListProductFavState extends State<ListProductFav> {
+  int favWant = 1;
   @override
   Widget build(BuildContext context) {
     List<Store> items = widget.items;
@@ -23,12 +23,6 @@ class ListProductState extends State<ListProduct> {
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildListDelegate([
-              SearchBar(items: items),
-              Card(
-                child: MostRating(
-                  items: items,
-                ),
-              ),
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -36,7 +30,7 @@ class ListProductState extends State<ListProduct> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'All products',
+                        'Favorite products',
                         style: TextStyle(
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold,
@@ -66,7 +60,6 @@ class ListProductState extends State<ListProduct> {
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
                     favWant: favWant,
-                    userId: widget.userId,
                   ),
                 );
               },
