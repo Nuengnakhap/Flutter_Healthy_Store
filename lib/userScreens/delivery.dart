@@ -2,11 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
-<<<<<<< HEAD
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
-=======
->>>>>>> b2e744460e9b5b5ba81ba96945cb268f90bf0cc1
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
