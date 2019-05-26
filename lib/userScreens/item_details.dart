@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/shopping_cart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
+import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/userScreens/cart.dart';
+import 'package:store_app_proj/userScreens/favorites.dart';
+import 'package:store_app_proj/userScreens/login.dart';
 
 class ItemDetail extends StatefulWidget {
   Store product;
@@ -17,10 +23,49 @@ class ItemDetail extends StatefulWidget {
 }
 
 class _ItemDetailState extends State<ItemDetail> {
+  AppMethods appMethod = FirebaseMethods();
+  Firestore _store = Firestore.instance;
+  List<String> favList = List();
+  int click = 0;
+  Client _client;
+  String acctName = 'Guest';
+  String acctEmail = '';
+  String acctPhotoUrl = '';
+  bool isLoggedIn = false;
+  String uid = '';
   final CartBloc _cartBloc = new CartBloc();
   bool isExpanded = false;
   int currentSizeIndex = 0;
   int _counter = 1;
+  @override
+  void initState() {
+    super.initState();
+
+    _asyncMethod().then((v) {
+      getFav();
+    });
+  }
+
+  Future getFav() async {
+    await Firestore.instance
+        .collection('usersData')
+        .document(uid)
+        .collection('favorites')
+        .snapshots()
+        .forEach((r) {
+      r.documents.forEach((r) {
+        Firestore.instance
+            .collection('usersData')
+            .document(uid)
+            .collection('favorites')
+            .document(r.documentID)
+            .get()
+            .then((v) {
+          this.favList.add(v['item'].toString());
+        });
+      });
+    });
+  }
 
   void _increase() {
     setState(() {
@@ -40,8 +85,39 @@ class _ItemDetailState extends State<ItemDetail> {
     });
   }
 
+  Future _asyncMethod() async {
+    _client = await DBProvider(dbName: 'Client').getLasted();
+    if (_client != null) {
+      acctName = _client.fullName;
+      acctEmail = _client.email;
+      acctPhotoUrl = _client.photo;
+      isLoggedIn = _client.logged;
+      uid = _client.userUID;
+    } else {
+      acctName = 'Guest';
+      acctEmail = '';
+      acctPhotoUrl = '';
+      isLoggedIn = false;
+      uid = '';
+    }
+    setState(() {});
+  }
+
+  checkIfLoggedIn() async {
+    if (isLoggedIn == false) {
+      bool response = await Navigator.of(context)
+          .push(CupertinoPageRoute(builder: (BuildContext context) => Login()));
+      if (response == true) _asyncMethod();
+      return;
+    }
+    bool response = await appMethod.logoutUser();
+    if (response == true) _asyncMethod();
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    int check = 0;
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -438,11 +514,78 @@ class _ItemDetailState extends State<ItemDetail> {
             children: <Widget>[
               Container(
                 width: (screenSize.width - 20) / 2,
-                child: Text(
-                  "ADD TO FAVORITES",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.w700),
+                child: GestureDetector(
+                  onTap: () {
+                    if (acctName == 'Guest') {
+                      checkIfLoggedIn();
+                    } else {
+                      setState(() {
+                        click == 0 ? click = 1 : click = 0;
+                      });
+                      if (favList == null || favList.length == 0) {
+                        print(favList);
+                        print("1111111");
+                        _store
+                            .collection("usersData")
+                            .document(uid)
+                            .collection("favorites")
+                            .add({
+                          'item': "${widget.product.itemName.toString()}",
+                          'T/F': 1
+                        });
+                      } else {
+                        print("22222222");
+                        check = 0;
+                        for (int i = 0; i < favList.length; i++) {
+                          if (favList[i] ==
+                              widget.product.itemName.toString()) {
+                            _store
+                                .collection("usersData")
+                                .document(uid)
+                                .collection("favorites")
+                                .where('item',
+                                    isEqualTo:
+                                        "${widget.product.itemName.toString()}")
+                                .getDocuments()
+                                .then((onValue) {
+                              onValue.documents.forEach((f) {
+                                _store
+                                    .collection("usersData")
+                                    .document(uid)
+                                    .collection('favorites')
+                                    .document(f.documentID)
+                                    .setData({
+                                  'item': widget.product.itemName.toString(),
+                                  'T/F': f['T/F'] == 0 ? 1 : 0
+                                });
+                              });
+                            });
+                            check = 1;
+                          }
+                        }
+                        if (check == 0) {
+                          _store
+                              .collection("usersData")
+                              .document(uid)
+                              .collection('favorites')
+                              .add({
+                            'item': "${widget.product.itemName.toString()}",
+                            'T/F': 1
+                          });
+                        }
+                      }
+                      Navigator.of(context).push(
+                          CupertinoPageRoute(builder: (BuildContext context) {
+                        return FavoritesScreen();
+                      }));
+                    }
+                  },
+                  child: Text(
+                    "ADD TO FAVORITES",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
               Container(

@@ -110,174 +110,44 @@ writeDataLocally({String key, String value}) async {
   localData.setString(key, value);
 }
 
-// SQLLite
-// Client clientFromJson(String str) {
-//   final jsonData = json.decode(str);
-//   return Client.fromMap(jsonData);
-// }
+removeDataLocally(String key) async {
+  Future<SharedPreferences> saveLocal = SharedPreferences.getInstance();
+  final SharedPreferences localData = await saveLocal;
+  localData.remove(key);
+}
 
-// String clientToJson(Client data) {
-//   final dyn = data.toMap();
-//   return json.encode(dyn);
-// }
+Future<String> getDataLocally(String key) async {
+  Future<SharedPreferences> saveLocal = SharedPreferences.getInstance();
+  final SharedPreferences localData = await saveLocal;
+  return localData.getString(key) ?? '';
+}
 
-// class Client {
-//   int id;
-//   String userUID;
-//   String fullName;
-//   String phone;
-//   String email;
-//   String password;
-//   String photo;
-//   bool logged;
+// หา application path
+Future<String> get _localPath async {
+  final directory = await getApplicationDocumentsDirectory();
+  return directory.path;
+}
 
-//   Client({
-//     this.id,
-//     this.userUID,
-//     this.fullName,
-//     this.phone,
-//     this.email,
-//     this.password,
-//     this.photo,
-//     this.logged,
-//   });
+// สร้าง file
+Future<File> get _localFile async {
+  final path = await _localPath;
+  return File('$path/data.txt');
+}
 
-//   factory Client.fromMap(Map<String, dynamic> json) => new Client(
-//         id: json['id'],
-//         userUID: json[userID],
-//         fullName: json[acctFullName],
-//         phone: json[phoneNumber],
-//         email: json[userEmail],
-//         password: json[userPassword],
-//         photo: json[photoURL],
-//         logged: json[loggedIN] == 1,
-//       );
+// write ลง file
+Future<File> writeData(String data) async {
+  final file = await _localFile;
+  return file.writeAsString('$data');
+}
 
-//   Map<String, dynamic> toMap() => {
-//         userID: userUID,
-//         acctFullName: fullName,
-//         phoneNumber: phone,
-//         userEmail: email,
-//         userPassword: password,
-//         photoURL: photo,
-//         loggedIN: logged == true ? 1 : 0,
-//       };
-// }
+// read จาก file
+Future<String> readData() async {
+  try {
+    final file = await _localFile;
+    String contents = await file.readAsString();
+    return contents;
+  } catch (e) {
+    return '';
+  }
+}
 
-// class DBProvider {
-//   // DBProvider._();
-
-//   // static final DBProvider db = DBProvider._();
-
-//   Database _database;
-//   String dbName;
-//   DBProvider({@required this.dbName});
-
-//   Future<Database> get database async {
-//     if (_database != null) return _database;
-//     // if _database is null we instantiate it
-//     _database = await initDB();
-//     return _database;
-//   }
-
-//   initDB() async {
-//     Directory documentsDirectory = await getApplicationDocumentsDirectory();
-//     String path = join(documentsDirectory.path, "TestDB.db");
-//     return await openDatabase(path, version: 1, onOpen: (db) {},
-//         onCreate: (Database db, int version) async {
-//       await db.execute("CREATE TABLE Client ("
-//           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-//           "$userID TEXT,"
-//           "$acctFullName TEXT,"
-//           "$phoneNumber TEXT,"
-//           "$userEmail TEXT,"
-//           "$userPassword TEXT,"
-//           "$photoURL TEXT,"
-//           "$loggedIN INTEGER"
-//           ")");
-//     });
-//   }
-
-//   newClient(Client newClient) async {
-//     final db = await database;
-//     //get the biggest id in the table
-//     // var table =
-//     //     await db.rawQuery("SELECT MAX($userID)+1 as $userID FROM Client");
-//     // int id = table.first["$userID"];
-//     // //insert to the table using the new id
-//     // var raw = await db.rawInsert(
-//     //     "INSERT Into Client ($userID,$acctFullName,$phoneNumber,$userEmail,$userPassword,$photoURL,$loggedIN)"
-//     //     " VALUES (?,?,?,?,?,?,?)",
-//     //     [
-//     //       newClient.userUID,
-//     //       newClient.fullName,
-//     //       newClient.phone,
-//     //       newClient.email,
-//     //       newClient.password,
-//     //       newClient.photo,
-//     //       newClient.logged
-//     //     ]);
-//     // return raw;
-//     newClient.id = await db.insert('Client', newClient.toMap());
-//     return newClient;
-//   }
-
-//   blockOrUnblock(Client client) async {
-//     final db = await database;
-//     Client blocked = Client(
-//         id: client.id,
-//         userUID: client.userUID,
-//         fullName: client.fullName,
-//         phone: client.phone,
-//         email: client.email,
-//         password: client.password,
-//         photo: client.photo,
-//         logged: !client.logged);
-//     var res = await db.update("Client", blocked.toMap(),
-//         where: "id = ?", whereArgs: [client.id]);
-//     return res;
-//   }
-
-//   updateClient(Client newClient) async {
-//     final db = await database;
-//     var res = await db.update("Client", newClient.toMap(),
-//         where: "id = ?", whereArgs: [newClient.id]);
-//     return res;
-//   }
-
-//   getClient(int id) async {
-//     final db = await database;
-//     var res = await db.query("Client", where: "id = ?", whereArgs: [id]);
-//     return res.isNotEmpty ? Client.fromMap(res.first) : null;
-//   }
-
-//   Future<List<Client>> getBlockedClients() async {
-//     final db = await database;
-
-//     print("works");
-//     // var res = await db.rawQuery("SELECT * FROM Client WHERE blocked=1");
-//     var res = await db.query("Client", where: "$loggedIN = ? ", whereArgs: [1]);
-
-//     List<Client> list =
-//         res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
-//     return list;
-//   }
-
-//   Future<List<Client>> getAllClients() async {
-//     final db = await database;
-//     var res = await db.query("Client");
-//     List<Client> list =
-//         res.isNotEmpty ? res.map((c) => Client.fromMap(c)).toList() : [];
-//     return list;
-//   }
-
-//   deleteClient(int id) async {
-//     final db = await database;
-//     return db.delete("Client", where: "id = ?", whereArgs: [id]);
-//   }
-
-//   deleteAll() async {
-//     final db = await database;
-//     db.rawDelete("Delete from Client");
-//   }
-// }

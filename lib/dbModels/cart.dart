@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 
-class Cart{
-
+class Cart {
   List<Order> _orders;
+  AppMethods appMethod = FirebaseMethods();
 
-  Cart(){
+  Cart() {
     _orders = List();
     fetchCart();
   }
@@ -19,19 +22,25 @@ class Cart{
     }
   }
 
-  void addOrder(Order order){
+  void addOrder(Order order) {
     _orders.add(order);
   }
 
-  void removeOrder(Order order){
+  void removeOrder(Order order) {
     _orders.remove(order);
   }
 
-  void removeAllOreder() {
+  void removeAllOrder() async {
+    Client _client = await DBProvider(dbName: 'Client').getLasted();
+    await appMethod.setOrderHistory(order: _orders, userID: _client.userUID);
     _orders.clear();
   }
 
-  void updateOrder(Order order){
+  void clearCart() {
+    _orders.clear();
+  }
+
+  void updateOrder(Order order) {
     for (var item in _orders) {
       if (item.id == order.id) {
         item.order_quantity = order.order_quantity;
@@ -39,9 +48,9 @@ class Cart{
     }
   }
 
-  double totalPrice(){
+  double totalPrice() {
     double total = 0;
-    _orders.forEach((o){
+    _orders.forEach((o) {
       total += o.orderPrice;
     });
 
@@ -53,5 +62,4 @@ class Cart{
   int get orderCount => _orders.length;
 
   bool get isEmpty => _orders.length == 0;
-
 }

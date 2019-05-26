@@ -1,5 +1,9 @@
 import 'package:flutter/rendering.dart';
+import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
+import 'package:store_app_proj/dbModels/order.dart';
+import 'package:store_app_proj/dbModels/orders.dart';
+import 'package:store_app_proj/tools/app_data.dart' as prefix0;
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'dart:async';
@@ -11,6 +15,7 @@ import 'package:flutter/services.dart';
 class FirebaseMethods implements AppMethods {
   Firestore firestore = Firestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
+  Client client = Client();
 
   @override
   Future<String> setAddress(
@@ -164,5 +169,88 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<DocumentSnapshot> getUserInfo(String userId) async {
     return await firestore.collection(usersData).document(userId).get();
+  }
+
+  @override
+  Future<String> setOrderHistory({List<Order> order, String userID}) async {
+    try {
+      Client _client = await DBProvider(dbName: 'Client').getLasted();
+      // List orderID = List();
+      // QuerySnapshot querySnapshot = await Firestore.instance
+      //     .collection(usersData)
+      //     .document(_client.userUID)
+      //     .collection('orderHistory')
+      //     .getDocuments().then((onValue) {
+      //       onValue.documents.toList().forEach((f) {
+      //         orderID.add(f.documentID);
+      //       });
+      //     });
+      // print(orderID);
+      // var list = querySnapshot;
+      // print(list);
+      if (_client != null) {
+        var orders = Orders(lstOrd: order, user: _client.userUID);
+        await firestore
+            .collection('orderHistory')
+            .document()
+            .setData(orders.toMap());
+        return successfulMSG();
+      }
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return errorMSG('error');
+  }
+
+  @override
+  Stream<QuerySnapshot> getOrderHistory() {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return firestore
+            .collection(usersData)
+            .document(client.userUID)
+            .collection('orderHistory')
+            .snapshots();
+      }
+    } catch (e) {
+      print(e.message);
+    }
+    return null;
+  }
+
+  checkLastUser() async {
+    client = await DBProvider(dbName: 'Client').getLasted();
+  }
+
+  @override
+  Future<String> updateUserAccount(
+      {String fullname, String phone, String email, String password}) async {
+    FirebaseUser user;
+    try {
+      user = await auth.currentUser();
+      if (user != null) {
+        user.updateEmail(email);
+        user.updatePassword(password);
+      }
+      await firestore.collection(usersData).document(user.uid).updateData({
+        userID: user.uid,
+        acctFullName: fullname,
+        userEmail: email,
+        userPassword: password,
+        phoneNumber: phone,
+        photoURL: '',
+      });
+      // List result =
+      //     await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+      //         .getAllDB();
+      // for (Client item in result) {
+      //   print(item.toMap());
+      // }
+    } on PlatformException catch (e) {
+      return errorMSG(e.message);
+    }
+
+    return user == null ? errorMSG('Error') : successfulMSG();
   }
 }
