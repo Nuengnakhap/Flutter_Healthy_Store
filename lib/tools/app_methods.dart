@@ -7,4 +7,5 @@ abstract class AppMethods {
   Future<String> createUserAccount({String fullname, String phone, String email, String password});
   Future<bool> logoutUser();
   Future<DocumentSnapshot> getUserInfo(String userId);
+  Future<String> setAddress({String userId, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longtitude});
 }
