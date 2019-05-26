@@ -54,7 +54,7 @@ class _DeliveryState extends State<Delivery> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          item.data["addressName"],
+                          item.data["addressname"],
                           textAlign: TextAlign.left,
                         ),
                         Row(
@@ -65,7 +65,12 @@ class _DeliveryState extends State<Delivery> {
                                   "Edit",
                                   style: TextStyle(fontWeight: FontWeight.w700),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).push(CupertinoPageRoute(
+                                      builder: (BuildContext context) {
+                                    return AddressPicker.update(item);
+                                  }));
+                                },
                               ),
                             ),
                             Expanded(
@@ -78,7 +83,7 @@ class _DeliveryState extends State<Delivery> {
                                       fontWeight: FontWeight.w700),
                                 ),
                                 onPressed: () async {
-                                  item.reference.delete();
+                                  await item.reference.delete();
                                 },
                               ),
                             )

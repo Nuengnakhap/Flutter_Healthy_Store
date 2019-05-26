@@ -36,7 +36,37 @@ class FirebaseMethods implements AppMethods {
             .collection('address')
             .document()
             .setData({
-          "addressName": addressName,
+          "addressname": addressName,
+          "fullname": fullname,
+          "phone": phone,
+          "address": address,
+          "province": province,
+          "district": district,
+          "zipcode": zipcode,
+          "location": GeoPoint(latitude, longitude),
+        });
+      });
+      return null;
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+  }
+
+  Future<String> updateAddress(
+      {DocumentReference ref,
+      String addressName,
+      String fullname,
+      String phone,
+      String address,
+      String province,
+      String district,
+      String zipcode,
+      double latitude,
+      double longitude}) async {
+    try {
+      await auth.currentUser().then((user) async {
+        await ref.updateData({
+          "addressname": addressName,
           "fullname": fullname,
           "phone": phone,
           "address": address,
