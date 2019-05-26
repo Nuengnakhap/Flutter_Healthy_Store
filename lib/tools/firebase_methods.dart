@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
@@ -18,7 +19,7 @@ class FirebaseMethods implements AppMethods {
 
   @override
   Future<String> setAddress(
-      {String userId,
+      {String addressName,
       String fullname,
       String phone,
       String address,
@@ -26,23 +27,48 @@ class FirebaseMethods implements AppMethods {
       String district,
       String zipcode,
       double latitude,
-      double longtitude}) async {
+      double longitude}) async {
     try {
-      await firestore
-          .collection(usersData)
-          .document(userId)
-          .collection('address')
-          .document()
-          .setData({
-        fullname: fullname,
-        phone: phone,
-        address: address,
-        province: province,
-        district: district,
-        zipcode: zipcode,
-        location: GeoPoint(latitude, longtitude),
+      await auth.currentUser().then((user) async {
+        await firestore
+            .collection(usersData)
+            .document(user.uid)
+            .collection('address')
+            .document()
+            .setData({
+          "addressName": addressName,
+          "fullname": fullname,
+          "phone": phone,
+          "address": address,
+          "province": province,
+          "district": district,
+          "zipcode": zipcode,
+          "location": GeoPoint(latitude, longitude),
+        });
       });
-      return successfulMSG();
+      return null;
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+  }
+
+  Stream<QuerySnapshot> getAddress(String uid) {
+    return firestore
+        .collection(usersData)
+        .document(uid)
+        .collection('address')
+        .snapshots();
+  }
+
+  Future<String> removeAddress(String uid, String aid) {
+    try {
+      firestore
+          .collection(usersData)
+          .document(uid)
+          .collection('address')
+          .document(aid)
+          .delete();
+      return null;
     } catch (e) {
       return errorMSG(e.message);
     }
@@ -252,5 +278,34 @@ class FirebaseMethods implements AppMethods {
       return errorMSG(e.message);
     }
     return null;
+  }
+  Future<String> updateUserAccount(
+      {String fullname, String phone, String email, String password}) async {
+    FirebaseUser user;
+    try {
+      user = await auth.currentUser();
+      if (user != null) {
+        user.updateEmail(email);
+        user.updatePassword(password);
+      }
+      await firestore.collection(usersData).document(user.uid).updateData({
+        userID: user.uid,
+        acctFullName: fullname,
+        userEmail: email,
+        userPassword: password,
+        phoneNumber: phone,
+        photoURL: '',
+      });
+      // List result =
+      //     await DBProvider(dbName: 'Client', cmdInitDB: Client.cmdInitDB)
+      //         .getAllDB();
+      // for (Client item in result) {
+      //   print(item.toMap());
+      // }
+    } on PlatformException catch (e) {
+      return errorMSG(e.message);
+    }
+
+    return user == null ? errorMSG('Error') : successfulMSG();
   }
 }

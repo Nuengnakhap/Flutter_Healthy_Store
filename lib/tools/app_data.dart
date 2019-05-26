@@ -32,6 +32,7 @@ const String pro_desc = "item_desc";
 const String pro_quantity = "item_quantity";
 
 // address
+const String addressName = 'addressname';
 const String fullname = 'fullname';
 const String phone = 'phone';
 const String address = 'address';
