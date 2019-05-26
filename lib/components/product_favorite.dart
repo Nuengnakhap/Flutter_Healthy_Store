@@ -17,6 +17,7 @@ class ListProductFavState extends State<ListProductFav> {
   @override
   Widget build(BuildContext context) {
     List<Store> items = widget.items.products;
+    MediaQueryData queryData  = MediaQuery.of(context);
     return Center(
       child: CustomScrollView(
         slivers: <Widget>[
@@ -45,7 +46,7 @@ class ListProductFavState extends State<ListProductFav> {
           SliverGrid(
             // physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: 175 / 260),
+                crossAxisCount: 2, childAspectRatio: (queryData.size.width/2)/270),
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -58,7 +59,7 @@ class ListProductFavState extends State<ListProductFav> {
                       itemRating: items.elementAt(index).itemRating,
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
-                    favWant: favWant,
+                    checked: true,
                   ),
                 );
               },

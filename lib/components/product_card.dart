@@ -13,9 +13,8 @@ import 'package:store_app_proj/userScreens/item_details.dart';
 
 class ProductCard extends StatefulWidget {
   Store product;
-  int favWant;
-  String userId;
-  ProductCard({Key key, this.product, this.favWant, this.userId})
+  bool checked = false;
+  ProductCard({Key key, @required this.product, this.checked = false})
       : super(key: key);
 
   @override
@@ -24,61 +23,11 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   AppMethods appMethod = FirebaseMethods();
-  Firestore _store = Firestore.instance;
-  List<String> favList = List();
   FavoriteBloc _favoriteBloc = FavoriteBloc();
-
-  int click = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    getFav();
-    getClick();
-  }
-
-  Future getFav() async {
-    await Firestore.instance
-        .collection('usersData')
-        .document(widget.userId)
-        .collection('favorites')
-        .snapshots()
-        .forEach((r) {
-      r.documents.forEach((k) async {
-        await Firestore.instance
-            .collection('usersData')
-            .document(widget.userId)
-            .collection('favorites')
-            .document(k.documentID)
-            .get()
-            .then((v) {
-          setState(() {
-            this.favList.add(v['item'].toString());
-          });
-        });
-      });
-    });
-  }
-
-  Future getClick() {
-    _store
-        .collection('usersData')
-        .document(widget.userId)
-        .collection('favorites')
-        .where('item', isEqualTo: "${widget.product.itemName.toString()}")
-        .getDocuments()
-        .then((onValue) {
-      onValue.documents.forEach((f) {
-        setState(() {
-          click = f['T/F'];
-        });
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
-
+    int click = widget.checked ? 1 : 0;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -227,16 +176,17 @@ class _ProductCardState extends State<ProductCard> {
                             // size: 16.0,
                           ),
                     onPressed: () {
-                      
                       if (click == 0) {
                         _favoriteBloc.addProductToFavorite(widget.product);
+                        setState(() {
+                          widget.checked = true;
+                        });
                       } else {
                         _favoriteBloc.removeProductofFav(widget.product);
+                        setState(() {
+                          widget.checked = false;
+                        });
                       }
-                      setState(() {
-                        click == 0 ? click = 1 : click = 0;
-                      });
-
                     },
                   ),
                 ],

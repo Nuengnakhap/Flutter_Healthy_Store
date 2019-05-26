@@ -52,6 +52,7 @@ class FirebaseMethods implements AppMethods {
     }
   }
 
+  @override
   Stream<QuerySnapshot> getAddress(String uid) {
     return firestore
         .collection(usersData)
@@ -250,9 +251,7 @@ class FirebaseMethods implements AppMethods {
             .document(client.userUID)
             .collection('favorites')
             .document(product.itemName)
-            .setData({
-              'item': product.itemName
-            });
+            .setData({'item': product.itemName});
         return successfulMSG();
       }
     } catch (e) {
@@ -279,6 +278,7 @@ class FirebaseMethods implements AppMethods {
     }
     return null;
   }
+
   Future<String> updateUserAccount(
       {String fullname, String phone, String email, String password}) async {
     FirebaseUser user;
@@ -307,5 +307,36 @@ class FirebaseMethods implements AppMethods {
     }
 
     return user == null ? errorMSG('Error') : successfulMSG();
+  }
+
+  @override
+  Future<DocumentSnapshot> getFavs() async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return await firestore
+            .collection(usersData)
+            .document(client.userUID)
+            .collection('orderHistory')
+            .document(client.userUID)
+            .get();
+      }
+    } catch (e) {
+      print(e.message);
+    }
+    return null;
+  }
+  
+  @override
+  getLastedUser() async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return client.userUID;
+      }
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return errorMSG('error');
   }
 }

@@ -6,16 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
+  String userid;
+  Delivery({this.userid});
   @override
   _DeliveryState createState() => _DeliveryState();
 }
 
 class _DeliveryState extends State<Delivery> {
-  FirebaseMethods appMethods = FirebaseMethods();
-  String uid = "jsjh7p1Tx4M4S4T0oGu0IdvZcWg2";
+  AppMethods appMethods = FirebaseMethods();
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class _DeliveryState extends State<Delivery> {
         ],
       ),
       body: StreamBuilder(
-        stream: appMethods.getAddress(uid),
+        stream: appMethods.getAddress(widget.userid),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(

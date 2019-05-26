@@ -16,10 +16,11 @@ class Favorite {
   }
 
   Future fetchFavorite() async {
-    List dd = await DBProvider(dbName: 'Cart').getAllDB();
-    for (var item in dd) {
-      _product.add(item);
-    }
+    // List dd = await DBProvider(dbName: 'Cart').getAllDB();
+    // List fav = await appMethod.getFavorites();
+    // for (var item in dd) {
+    //   _product.add(item);
+    // }
   }
 
   void addProduct(Store product) async {

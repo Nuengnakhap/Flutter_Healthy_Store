@@ -6,18 +6,17 @@ import 'package:store_app_proj/dbModels/Store.dart';
 
 class ListProduct extends StatefulWidget {
   List<Store> items;
-  String userId;
-  ListProduct({Key key, this.items, this.userId}) : super(key: key);
+  ListProduct({Key key, this.items}) : super(key: key);
 
   @override
   ListProductState createState() => ListProductState();
 }
 
 class ListProductState extends State<ListProduct> {
-  int favWant = 0;
   @override
   Widget build(BuildContext context) {
     List<Store> items = widget.items;
+    MediaQueryData queryData  = MediaQuery.of(context);
     return Center(
       child: CustomScrollView(
         slivers: <Widget>[
@@ -52,7 +51,7 @@ class ListProductState extends State<ListProduct> {
           SliverGrid(
             // physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: 175 / 260),
+                crossAxisCount: 2, childAspectRatio: (queryData.size.width/2)/270),
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
@@ -65,8 +64,6 @@ class ListProductState extends State<ListProduct> {
                       itemRating: items.elementAt(index).itemRating,
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
-                    favWant: favWant,
-                    userId: widget.userId,
                   ),
                 );
               },
