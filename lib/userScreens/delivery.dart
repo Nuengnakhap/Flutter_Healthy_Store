@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
+import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
@@ -34,7 +36,7 @@ class _DeliveryState extends State<Delivery> {
         ],
       ),
       body: StreamBuilder(
-        stream: appMethods.getAddress(uid),
+        stream: appMethods.getAddress(widget.userid),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData && snapshot.data.documents.length > 0) {
             print(snapshot.data.documents.length);

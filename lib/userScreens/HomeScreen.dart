@@ -228,7 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
-            return ListProduct(items: snapshot.data, userId: userId);
+            return ListProduct(items: snapshot.data);
           } else {
             return Center(child: ProgressDialog());
           }

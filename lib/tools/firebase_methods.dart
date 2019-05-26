@@ -79,6 +79,7 @@ class FirebaseMethods implements AppMethods {
     }
   }
 
+  @override
   Stream<QuerySnapshot> getAddress(String uid) {
     return firestore
         .collection(usersData)
@@ -333,5 +334,36 @@ class FirebaseMethods implements AppMethods {
     }
 
     return user == null ? errorMSG('Error') : successfulMSG();
+  }
+
+  @override
+  Future<DocumentSnapshot> getFavs() async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return await firestore
+            .collection(usersData)
+            .document(client.userUID)
+            .collection('orderHistory')
+            .document(client.userUID)
+            .get();
+      }
+    } catch (e) {
+      print(e.message);
+    }
+    return null;
+  }
+  
+  @override
+  getLastedUser() async {
+    try {
+      checkLastUser();
+      if (client != null) {
+        return client.userUID;
+      }
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return errorMSG('error');
   }
 }
