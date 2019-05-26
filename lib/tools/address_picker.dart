@@ -174,7 +174,8 @@ class _AddressPickerState extends State<AddressPicker> {
                             longitude: _markers.elementAt(0).position.longitude,
                           );
                         }
-                        Navigator.pushReplacementNamed(context, "/");
+                        // Navigator.pushReplacementNamed(context, "/");
+                        Navigator.pop(context);
                       }
                     },
                   )
