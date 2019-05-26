@@ -1,3 +1,4 @@
+import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
@@ -12,9 +13,23 @@ class FirebaseMethods implements AppMethods {
   FirebaseAuth auth = FirebaseAuth.instance;
 
   @override
-  Future<String> setAddress({String userId, String fullname, String phone, String address, String province, String district, String zipcode, double latitude, double longtitude}) async {
+  Future<String> setAddress(
+      {String userId,
+      String fullname,
+      String phone,
+      String address,
+      String province,
+      String district,
+      String zipcode,
+      double latitude,
+      double longtitude}) async {
     try {
-      await firestore.collection(usersData).document(userId).collection('address').document().setData({
+      await firestore
+          .collection(usersData)
+          .document(userId)
+          .collection('address')
+          .document()
+          .setData({
         fullname: fullname,
         phone: phone,
         address: address,
@@ -23,7 +38,7 @@ class FirebaseMethods implements AppMethods {
         zipcode: zipcode,
         location: GeoPoint(latitude, longtitude),
       });
-
+      return successfulMSG();
     } catch (e) {
       return errorMSG(e.message);
     }
@@ -75,8 +90,7 @@ class FirebaseMethods implements AppMethods {
           email: email, password: password);
       if (user != null) {
         DocumentSnapshot userInfo = await getUserInfo(user.uid);
-        await DBProvider(dbName: 'Client')
-            .newDB(Client(
+        await DBProvider(dbName: 'Client').newDB(Client(
           userUID: userInfo[userID],
           fullName: userInfo[acctFullName],
           email: userInfo[userEmail],
@@ -125,5 +139,32 @@ class FirebaseMethods implements AppMethods {
   @override
   Future<DocumentSnapshot> getUserInfo(String userId) async {
     return await firestore.collection(usersData).document(userId).get();
+  }
+
+  @override
+  Future<String> setOrderHistory({Store product, int quantity}) async {
+    try {
+      Client _client = await DBProvider(dbName: 'Client').getLasted();
+      if (_client != null) {
+        await firestore
+            .collection(usersData)
+            .document(_client.userUID)
+            .collection('orderHistory')
+            .document()
+            .setData({
+          c_pro_name: product.itemName,
+          c_pro_price: product.itemPrice,
+          c_pro_image: product.itemImage,
+          c_pro_rating: product.itemRating,
+          c_pro_desc: product.itemDesc,
+          c_pro_quantity: quantity,
+        });
+        return successfulMSG();
+      }
+
+    } catch (e) {
+      return errorMSG(e.message);
+    }
+    return errorMSG('error');
   }
 }

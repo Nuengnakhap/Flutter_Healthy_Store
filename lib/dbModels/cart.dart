@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Cart{
 
   List<Order> _orders;
+    AppMethods appMethod = FirebaseMethods();
 
   Cart(){
     _orders = List();
@@ -27,7 +30,14 @@ class Cart{
     _orders.remove(order);
   }
 
-  void removeAllOreder() {
+  void removeAllOrder() async {
+    _orders.forEach((order) async {
+      await appMethod.setOrderHistory(product: order.order_product, quantity: order.order_quantity);
+    });
+    _orders.clear();
+  }
+
+  void clearCart() {
     _orders.clear();
   }
 

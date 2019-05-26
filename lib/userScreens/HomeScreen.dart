@@ -9,6 +9,7 @@ import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
+import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'favorites.dart';
@@ -49,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   AppMethods appMethod = FirebaseMethods();
 
   StreamController _productController;
+  
+  CartBloc _cartBloc = CartBloc();
 
   @override
   void initState() {
@@ -371,7 +374,10 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
     bool response = await appMethod.logoutUser();
-    if (response == true) _asyncMethod();
+    if (response == true) {
+      _asyncMethod();
+      _cartBloc.clearCart();
+    }
     Navigator.pop(context);
   }
 }

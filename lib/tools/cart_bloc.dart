@@ -65,7 +65,13 @@ class CartBloc {
   }
 
   void removeAllOrder() async {
-    _currentCart.removeAllOreder();
+    _currentCart.removeAllOrder();
+    await DBProvider(dbName: 'Cart').deleteAll();
+    _updateCart();
+  }
+
+  void clearCart() async {
+    _currentCart.clearCart();
     await DBProvider(dbName: 'Cart').deleteAll();
     _updateCart();
   }
