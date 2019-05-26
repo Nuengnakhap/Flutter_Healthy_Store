@@ -1,21 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
-  String userid;
-  Delivery({this.userid});
+  final String userId;
+
+  const Delivery({Key key, this.userId}) : super(key: key);
   @override
   _DeliveryState createState() => _DeliveryState();
 }
 
 class _DeliveryState extends State<Delivery> {
-  AppMethods appMethods = FirebaseMethods();
-
+  FirebaseMethods appMethods = FirebaseMethods();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,18 +27,20 @@ class _DeliveryState extends State<Delivery> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context)
-                  .push(CupertinoPageRoute(builder: (BuildContext context) {
-                return AddressPicker();
-              }));
+              Location().getLocation().then((l) {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (BuildContext context) {
+                  return AddressPicker(userId: widget.userId);
+                }));
+              });
             },
           )
         ],
       ),
       body: StreamBuilder(
-        stream: appMethods.getAddress(widget.userid),
+        stream: appMethods.getAddress(widget.userId),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data.documents.length > 0) {
             return ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data.documents.length,
@@ -74,6 +77,8 @@ class _DeliveryState extends State<Delivery> {
                             ),
                             Expanded(
                               child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0)),
                                 color: Colors.red,
                                 child: Text(
                                   "Remove",

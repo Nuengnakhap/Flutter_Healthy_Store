@@ -18,7 +18,8 @@ class FirebaseMethods implements AppMethods {
 
   @override
   Future<String> setAddress(
-      {String addressName,
+      {String userId,
+      String addressName,
       String fullname,
       String phone,
       String address,
@@ -28,22 +29,20 @@ class FirebaseMethods implements AppMethods {
       double latitude,
       double longitude}) async {
     try {
-      await auth.currentUser().then((user) async {
-        await firestore
-            .collection(usersData)
-            .document(user.uid)
-            .collection('address')
-            .document()
-            .setData({
-          "addressname": addressName,
-          "fullname": fullname,
-          "phone": phone,
-          "address": address,
-          "province": province,
-          "district": district,
-          "zipcode": zipcode,
-          "location": GeoPoint(latitude, longitude),
-        });
+      await firestore
+          .collection(usersData)
+          .document(userId)
+          .collection('address')
+          .document()
+          .setData({
+        "addressname": addressName,
+        "fullname": fullname,
+        "phone": phone,
+        "address": address,
+        "province": province,
+        "district": district,
+        "zipcode": zipcode,
+        "location": GeoPoint(latitude, longitude),
       });
       return null;
     } catch (e) {
@@ -63,17 +62,15 @@ class FirebaseMethods implements AppMethods {
       double latitude,
       double longitude}) async {
     try {
-      await auth.currentUser().then((user) async {
-        await ref.updateData({
-          "addressname": addressName,
-          "fullname": fullname,
-          "phone": phone,
-          "address": address,
-          "province": province,
-          "district": district,
-          "zipcode": zipcode,
-          "location": GeoPoint(latitude, longitude),
-        });
+      await ref.updateData({
+        "addressname": addressName,
+        "fullname": fullname,
+        "phone": phone,
+        "address": address,
+        "province": province,
+        "district": district,
+        "zipcode": zipcode,
+        "location": GeoPoint(latitude, longitude),
       });
       return null;
     } catch (e) {

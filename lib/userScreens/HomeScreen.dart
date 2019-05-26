@@ -289,7 +289,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.of(context)
                     .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Delivery();
+                  return Delivery(userId: userId);
                 }));
               },
             ),

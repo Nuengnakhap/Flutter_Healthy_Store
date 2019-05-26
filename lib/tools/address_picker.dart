@@ -9,8 +9,9 @@ CameraPosition defaultLocation =
     CameraPosition(target: LatLng(13.730801, 100.781775), zoom: 15);
 
 class AddressPicker extends StatefulWidget {
+  String userId;
   DocumentSnapshot location;
-  AddressPicker();
+  AddressPicker({this.userId});
   AddressPicker.update(this.location);
   @override
   _AddressPickerState createState() => _AddressPickerState();
@@ -66,7 +67,7 @@ class _AddressPickerState extends State<AddressPicker> {
         builder: (BuildContext context) {
           return AlertDialog(
             contentPadding: EdgeInsets.all(12),
-            title: Text("Fill this information"),
+            title: Text("Complete your Address"),
             titlePadding: EdgeInsets.all(12),
             content: Form(
               key: _formKey,
@@ -140,6 +141,8 @@ class _AddressPickerState extends State<AddressPicker> {
                     },
                   ),
                   RaisedButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0)),
                     color: Colors.green,
                     child: Text(
                       "Confirm",
@@ -150,6 +153,7 @@ class _AddressPickerState extends State<AddressPicker> {
                       if (_formKey.currentState.validate()) {
                         if (widget.location == null) {
                           await appMethods.setAddress(
+                            userId: widget.userId,
                             addressName: addressName.text,
                             fullname: fullName.text,
                             phone: phone.text,
@@ -174,7 +178,7 @@ class _AddressPickerState extends State<AddressPicker> {
                             longitude: _markers.elementAt(0).position.longitude,
                           );
                         }
-                        // Navigator.pushReplacementNamed(context, "/");
+                        Navigator.pop(context);
                         Navigator.pop(context);
                       }
                     },
@@ -195,7 +199,7 @@ class _AddressPickerState extends State<AddressPicker> {
       ),
       body: GoogleMap(
         mapType: MapType.normal,
-        // myLocationEnabled: true,
+        myLocationEnabled: true,
         markers: _markers,
         initialCameraPosition: mapPosition,
         onMapCreated: (GoogleMapController controller) {
@@ -217,6 +221,8 @@ class _AddressPickerState extends State<AddressPicker> {
                 padding: EdgeInsets.all(5),
                 width: MediaQuery.of(context).size.width / 2,
                 child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0)),
                   color: Colors.blue,
                   child: Text(
                     _markers.length == 0 ? "Pin Location" : "Replace Location",
@@ -231,6 +237,8 @@ class _AddressPickerState extends State<AddressPicker> {
                 width: MediaQuery.of(context).size.width / 2,
                 child: _markers.length == 0
                     ? RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0)),
                         color: Colors.red,
                         child: Text(
                           "Cancel",
@@ -242,6 +250,8 @@ class _AddressPickerState extends State<AddressPicker> {
                         },
                       )
                     : RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0)),
                         color: Colors.green,
                         child: Text(
                           "Confirm",
