@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
             onPressed: () {
               if (acctName == 'Guest') {
-                checkIfLoggedIn();
+                checkLogin();
               } else {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) {
@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }));
                   } else if (acctName == 'Guest') {
-                    checkIfLoggedIn();
+                    checkLogin();
                   } else {
                     Navigator.of(context).push(
                         CupertinoPageRoute(builder: (BuildContext context) {
@@ -257,10 +257,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Text('Order History'),
               onTap: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return OrderHistory();
-                }));
+                if (isLoggedIn) {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(builder: (BuildContext context) {
+                    return OrderHistory();
+                  }));
+                } else {
+                  checkLogin();
+                }
               },
             ),
             Divider(),
@@ -287,10 +291,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Text('Delivery Address'),
               onTap: () {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Delivery(userId: userId);
-                }));
+                if (isLoggedIn) {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(builder: (BuildContext context) {
+                    return Delivery(userId: userId);
+                  }));
+                } else {
+                  checkLogin();
+                }
               },
             ),
             Divider(),
@@ -368,11 +376,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   checkIfEditedProfile() async {
-    if (isEditedProfile == false) {
-      bool res = await Navigator.of(context)
-          .push(CupertinoPageRoute(builder: (BuildContext context) => Profile()
-      ));
-      if (res == true) _asyncMethod();
+    if (isLoggedIn == false) {
+      bool response = await Navigator.of(context)
+          .push(CupertinoPageRoute(builder: (BuildContext context) => Login()));
+      if (response == true) _asyncMethod();
+      return;
+    }
+    bool res = await Navigator.of(context)
+        .push(CupertinoPageRoute(builder: (BuildContext context) => Profile()));
+    if (res == true) _asyncMethod();
+    return;
+  }
+
+  checkLogin() async {
+    if (isLoggedIn == false) {
+      bool response = await Navigator.of(context)
+          .push(CupertinoPageRoute(builder: (BuildContext context) => Login()));
+      if (response == true) _asyncMethod();
       return;
     }
   }

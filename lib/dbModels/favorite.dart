@@ -20,16 +20,17 @@ class Favorite {
   Future fetchFavorite() async {
     // List dd = await DBProvider(dbName: 'Cart').getAllDB();
     List<DocumentSnapshot> fav = await appMethod.getFavs();
-
-    fav.forEach((f) {
-      _product.add(Store.items(
-        itemName: f.data[pro_name],
-        itemDesc: f.data[pro_desc],
-        itemImage: f.data[pro_image],
-        itemPrice: f.data[pro_price],
-        itemRating: f.data[pro_rating],
-      ));
-    });
+    if (fav != null && fav.length > 0) {
+      fav.forEach((f) {
+        _product.add(Store.items(
+          itemName: f.data[pro_name],
+          itemDesc: f.data[pro_desc],
+          itemImage: f.data[pro_image],
+          itemPrice: f.data[pro_price],
+          itemRating: f.data[pro_rating],
+        ));
+      });
+    }
   }
 
   void addProduct(Store product) async {
