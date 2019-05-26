@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
@@ -18,7 +19,6 @@ class _DeliveryState extends State<Delivery> {
   FirebaseMethods appMethods = FirebaseMethods();
   @override
   Widget build(BuildContext context) {
-    String uid = widget.userId;
     return Scaffold(
       appBar: AppBar(
         title: Text('Delivery Address'),
@@ -27,19 +27,20 @@ class _DeliveryState extends State<Delivery> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context)
-                  .push(CupertinoPageRoute(builder: (BuildContext context) {
-                return AddressPicker(userId: uid);
-              }));
+              Location().getLocation().then((l) {
+                Navigator.of(context)
+                    .push(CupertinoPageRoute(builder: (BuildContext context) {
+                  return AddressPicker(userId: widget.userId);
+                }));
+              });
             },
           )
         ],
       ),
       body: StreamBuilder(
-        stream: appMethods.getAddress(widget.userid),
+        stream: appMethods.getAddress(widget.userId),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData && snapshot.data.documents.length > 0) {
-            print(snapshot.data.documents.length);
             return ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data.documents.length,
@@ -76,6 +77,8 @@ class _DeliveryState extends State<Delivery> {
                             ),
                             Expanded(
                               child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0)),
                                 color: Colors.red,
                                 child: Text(
                                   "Remove",

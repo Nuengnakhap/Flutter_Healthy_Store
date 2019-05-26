@@ -45,6 +45,7 @@ dependencies:
   flutter_masked_text: ^0.8.0
   font_awesome_flutter: ^8.4.0
   google_maps_flutter: ^0.5.7
+  location: ^1.4.1
 
 dev_dependencies:
   flutter_test:
