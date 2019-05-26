@@ -157,7 +157,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -308,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.of(context)
                     .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return Delivery();
+                  return Delivery(userId: userId);
                 }));
               },
             ),

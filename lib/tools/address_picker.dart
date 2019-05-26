@@ -9,8 +9,9 @@ CameraPosition defaultLocation =
     CameraPosition(target: LatLng(13.730801, 100.781775), zoom: 15);
 
 class AddressPicker extends StatefulWidget {
+  String userId;
   DocumentSnapshot location;
-  AddressPicker();
+  AddressPicker({this.userId});
   AddressPicker.update(this.location);
   @override
   _AddressPickerState createState() => _AddressPickerState();
@@ -150,6 +151,7 @@ class _AddressPickerState extends State<AddressPicker> {
                       if (_formKey.currentState.validate()) {
                         if (widget.location == null) {
                           await appMethods.setAddress(
+                            userId: widget.userId,
                             addressName: addressName.text,
                             fullname: fullName.text,
                             phone: phone.text,

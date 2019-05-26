@@ -5,16 +5,18 @@ import 'package:store_app_proj/tools/address_picker.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
 class Delivery extends StatefulWidget {
+  final String userId;
+
+  const Delivery({Key key, this.userId}) : super(key: key);
   @override
   _DeliveryState createState() => _DeliveryState();
 }
 
 class _DeliveryState extends State<Delivery> {
   FirebaseMethods appMethods = FirebaseMethods();
-  String uid = "jsjh7p1Tx4M4S4T0oGu0IdvZcWg2";
-
   @override
   Widget build(BuildContext context) {
+    String uid = widget.userId;
     return Scaffold(
       appBar: AppBar(
         title: Text('Delivery Address'),
@@ -25,7 +27,7 @@ class _DeliveryState extends State<Delivery> {
             onPressed: () {
               Navigator.of(context)
                   .push(CupertinoPageRoute(builder: (BuildContext context) {
-                return AddressPicker();
+                return AddressPicker(userId: uid);
               }));
             },
           )
@@ -34,7 +36,8 @@ class _DeliveryState extends State<Delivery> {
       body: StreamBuilder(
         stream: appMethods.getAddress(uid),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data.documents.length > 0) {
+            print(snapshot.data.documents.length);
             return ListView.builder(
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data.documents.length,
