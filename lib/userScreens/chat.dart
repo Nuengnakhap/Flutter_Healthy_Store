@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/tools/app_data.dart';
 import 'const.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,16 +13,19 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_db.dart';
+import 'HomeScreen.dart';
 
 class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
   final String userId;
+  final String adminId;
 
   Chat(
       {Key key,
       @required this.peerId,
       @required this.userId,
+      @required this.adminId,
       @required this.peerAvatar})
       : super(key: key);
 
@@ -36,10 +40,10 @@ class Chat extends StatelessWidget {
         centerTitle: true,
       ),
       body: new ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
-        userId: userId,
-      ),
+          peerId: peerId,
+          peerAvatar: peerAvatar,
+          userId: userId,
+          adminId: adminId),
     );
   }
 }
@@ -48,11 +52,13 @@ class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
   final String userId;
+  final String adminId;
 
   ChatScreen(
       {Key key,
       @required this.peerId,
       @required this.userId,
+      @required this.adminId,
       @required this.peerAvatar})
       : super(key: key);
 
@@ -173,21 +179,39 @@ class ChatScreenState extends State<ChatScreen> {
           },
         );
       });
-      Firestore.instance
-          .collection('usersData')
-          .document(id)
-          .get()
-          .then((item) {
-        Firestore.instance.collection('usersData').document(id).setData({
-          'acctFullName': item['acctFullName'],
-          'phoneNumber': item['phoneNumber'],
-          'photoURL': item['photoURL'],
-          'userEmail': item['userEmail'],
-          'userID': item['userID'],
-          'userPassword': item['userPassword'],
-          'isMessage': 1
+      if (id == widget.adminId) {
+        Firestore.instance
+            .collection('usersData')
+            .document(id)
+            .get()
+            .then((item) {
+          Firestore.instance.collection('usersData').document(id).setData({
+            'acctFullName': item['acctFullName'],
+            'phoneNumber': item['phoneNumber'],
+            'photoURL': item['photoURL'],
+            'userEmail': item['userEmail'],
+            'userID': item['userID'],
+            'userPassword': item['userPassword'],
+            'isMessage': 0
+          });
         });
-      });
+      } else {
+        Firestore.instance
+            .collection('usersData')
+            .document(id)
+            .get()
+            .then((item) {
+          Firestore.instance.collection('usersData').document(id).setData({
+            'acctFullName': item['acctFullName'],
+            'phoneNumber': item['phoneNumber'],
+            'photoURL': item['photoURL'],
+            'userEmail': item['userEmail'],
+            'userID': item['userID'],
+            'userPassword': item['userPassword'],
+            'isMessage': 1
+          });
+        });
+      }
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
