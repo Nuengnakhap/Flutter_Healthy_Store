@@ -136,7 +136,9 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: zipCode,
                     decoration: InputDecoration(labelText: "Zip Code"),
                     validator: (value) {
-                      if (value.length != 5 ||
+                      if (value.isEmpty) {
+                        return "Please fill out this form";
+                      } else if (value.length != 5 ||
                           !RegExp(r"^[0-9]*$").hasMatch(value)) {
                         return "This is not a zip code";
                       }
