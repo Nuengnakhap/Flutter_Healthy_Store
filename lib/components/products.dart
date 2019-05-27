@@ -87,23 +87,6 @@ class ListProductState extends State<ListProduct> {
                     checked: false,
                   ),
                 );
-                // _favoriteBloc.currentFavorite.products.where((fav) {
-                //   if (fav.itemName == items.elementAt(index).itemName) {
-                //     checked = true;
-                //   }
-                // });
-                // return Card(
-                //   child: ProductCard(
-                //     product: Store.items(
-                //       itemName: items.elementAt(index).itemName,
-                //       itemImage: items.elementAt(index).itemImage,
-                //       itemPrice: items.elementAt(index).itemPrice,
-                //       itemRating: items.elementAt(index).itemRating,
-                //       itemDesc: items.elementAt(index).itemDesc,
-                //     ),
-                //     checked: checked,
-                //   ),
-                // );
               },
               childCount: items.length,
             ),
