@@ -27,11 +27,21 @@ class _DeliveryState extends State<Delivery> {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Location().getLocation().then((l) {
-                Navigator.of(context)
-                    .push(CupertinoPageRoute(builder: (BuildContext context) {
-                  return AddressPicker(userId: widget.userId);
-                }));
+              Location location = Location();
+              location.hasPermission().then((value) {
+                if (value) {
+                  Navigator.of(context)
+                      .push(CupertinoPageRoute(builder: (BuildContext context) {
+                    return AddressPicker(userId: widget.userId);
+                  }));
+                } else {
+                  Location().getLocation().then((l) {
+                    Navigator.of(context).push(
+                        CupertinoPageRoute(builder: (BuildContext context) {
+                      return AddressPicker(userId: widget.userId);
+                    }));
+                  });
+                }
               });
             },
           )
@@ -51,13 +61,45 @@ class _DeliveryState extends State<Delivery> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0)),
                   child: Container(
-                    padding: EdgeInsets.fromLTRB(15, 12, 15, 12),
+                    padding: EdgeInsets.fromLTRB(20, 18, 15, 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           item.data["addressname"],
                           textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 20),
+                        ),
+                        Text(
+                          "Reciever: ${item.data["fullname"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        Text(
+                          "Phone: ${item.data["phone"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        Text(
+                          "Address: ${item.data["address"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        Text(
+                          "District: ${item.data["district"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        Text(
+                          "Province: ${item.data["province"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
+                        ),
+                        Text(
+                          "Zipcode: ${item.data["zipcode"]}",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(fontSize: 17),
                         ),
                         Row(
                           children: <Widget>[

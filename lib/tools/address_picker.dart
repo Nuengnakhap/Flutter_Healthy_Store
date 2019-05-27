@@ -99,7 +99,8 @@ class _AddressPickerState extends State<AddressPicker> {
                     validator: (value) {
                       if (value.isEmpty) {
                         return "Please fill out this form";
-                      } else if (value.length > 10) {
+                      } else if (value.length > 10 ||
+                          !RegExp(r"^[0-9]*$").hasMatch(value)) {
                         return "This in not a phone number";
                       }
                     },
@@ -135,7 +136,8 @@ class _AddressPickerState extends State<AddressPicker> {
                     controller: zipCode,
                     decoration: InputDecoration(labelText: "Zip Code"),
                     validator: (value) {
-                      if (value.length != 5) {
+                      if (value.length != 5 ||
+                          !RegExp(r"^[0-9]*$").hasMatch(value)) {
                         return "This is not a zip code";
                       }
                     },
