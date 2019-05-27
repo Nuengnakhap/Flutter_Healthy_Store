@@ -25,22 +25,31 @@ class ItemDetail extends StatefulWidget {
 
 class _ItemDetailState extends State<ItemDetail> {
   AppMethods appMethod = FirebaseMethods();
- 
+
   final CartBloc _cartBloc = new CartBloc();
   final FavoriteBloc _favoriteBloc = FavoriteBloc();
   bool isExpanded = false;
   int currentSizeIndex = 0;
   int _counter = 1;
+  double price = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    price = widget.product.itemPrice;
+  }
 
   void _increase() {
     setState(() {
       _counter++;
+      price = (widget.product.itemPrice * _counter);
     });
   }
 
   void _decrease() {
     setState(() {
       if (_counter > 1) _counter--;
+      price = (widget.product.itemPrice * _counter);
     });
   }
 
@@ -132,7 +141,7 @@ class _ItemDetailState extends State<ItemDetail> {
                             ),
                           ),
                           Text(
-                            '\$${widget.product.itemPrice.toStringAsFixed(2)}',
+                            '\$${price.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.teal,
