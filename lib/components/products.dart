@@ -58,7 +58,7 @@ class ListProductState extends State<ListProduct> {
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                bool checked = false;
+                // bool checked = false;
                 for (var item in _favoriteBloc.currentFavorite.products) {
                   if (item.itemName == items.elementAt(index).itemName) {
                     return Card(
@@ -73,26 +73,8 @@ class ListProductState extends State<ListProduct> {
                         checked: true,
                       ),
                     );
-                  } else {
-                    return Card(
-                      child: ProductCard(
-                        product: Store.items(
-                          itemName: items.elementAt(index).itemName,
-                          itemImage: items.elementAt(index).itemImage,
-                          itemPrice: items.elementAt(index).itemPrice,
-                          itemRating: items.elementAt(index).itemRating,
-                          itemDesc: items.elementAt(index).itemDesc,
-                        ),
-                        checked: false,
-                      ),
-                    );
                   }
                 }
-                _favoriteBloc.currentFavorite.products.where((fav) {
-                  if (fav.itemName == items.elementAt(index).itemName) {
-                    checked = true;
-                  }
-                });
                 return Card(
                   child: ProductCard(
                     product: Store.items(
@@ -102,7 +84,7 @@ class ListProductState extends State<ListProduct> {
                       itemRating: items.elementAt(index).itemRating,
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
-                    checked: checked,
+                    checked: false,
                   ),
                 );
               },
