@@ -1,4 +1,3 @@
-import 'package:flutter/rendering.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/dbModels/order.dart';
@@ -295,23 +294,23 @@ class FirebaseMethods implements AppMethods {
     try {
       user = await auth.currentUser();
       if (user != null) {
+        await firestore.collection(usersData).document(user.uid).updateData({
+          userID: user.uid,
+          acctFullName: fullname,
+          userEmail: email,
+          userPassword: password,
+          phoneNumber: phone,
+          photoURL: '',
+        });
+        Client client = await checkLastUser();
+        client.fullName = fullname;
+        client.phone = phone;
+        client.password = password;
+        client.email = email;
+        await DBProvider(dbName: 'Client').updateDB(client);
         user.updateEmail(email);
         user.updatePassword(password);
       }
-      await firestore.collection(usersData).document(user.uid).updateData({
-        userID: user.uid,
-        acctFullName: fullname,
-        userEmail: email,
-        userPassword: password,
-        phoneNumber: phone,
-        photoURL: '',
-      });
-      Client client = await checkLastUser();
-      client.fullName = fullname;
-      client.phone = phone;
-      client.password = password;
-      client.email = email;
-      await DBProvider(dbName: 'Client').updateDB(client);
     } on PlatformException catch (e) {
       return errorMSG(e.message);
     }
