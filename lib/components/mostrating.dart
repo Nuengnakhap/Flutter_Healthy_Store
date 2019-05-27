@@ -61,6 +61,7 @@ class _MostRatingState extends State<MostRating> {
                     itemRating: newList[newList.length - 1 - index].itemRating,
                     itemDesc: newList[newList.length - 1 - index].itemDesc,
                   ),
+                  checked: false,
                 );
               },
             ),

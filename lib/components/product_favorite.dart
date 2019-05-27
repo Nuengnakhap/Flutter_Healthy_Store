@@ -13,10 +13,12 @@ class ListProductFav extends StatefulWidget {
 }
 
 class ListProductFavState extends State<ListProductFav> {
-  int favWant = 1;
   @override
   Widget build(BuildContext context) {
-    List<Store> items = widget.items.products;
+    List<Store> items;
+    setState(() {
+      items = widget.items.products;
+    });
     MediaQueryData queryData  = MediaQuery.of(context);
     return Center(
       child: CustomScrollView(

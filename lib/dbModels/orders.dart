@@ -25,11 +25,13 @@ class Orders {
   // }
 
   Map<String, dynamic> toMap() {
+    List ord = List();
     lstOrd.forEach((f) {
+      ord.add(f.order_product.itemName);
       price += (f.order_product.itemPrice * f.order_quantity);
     });
     return  {
-      'items_id': lstOrd.toString(),
+      'items_id': ord,
       'total_price': price,
       'userID': user,
     };
