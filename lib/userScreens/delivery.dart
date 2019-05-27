@@ -29,7 +29,7 @@ class _DeliveryState extends State<Delivery> {
           IconButton(
             icon: Icon(Icons.home),
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
+              Navigator.of(context).pushReplacement(MaterialPageRoute(
                 builder: (BuildContext context) {
                   return HomeScreen();
                 },

@@ -171,10 +171,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                     margin: EdgeInsets.only(
                                                         top: 3.0),
                                                     child: Text(
-                                                      snapshot
-                                                          .data
-                                                          .documents[index]
-                                                          .documentID,
+                                                      "${snapshot.data.documents[index].documentID.toString().substring(0, 10)}...",
                                                       style: TextStyle(
                                                           fontSize: 15.0,
                                                           color:
