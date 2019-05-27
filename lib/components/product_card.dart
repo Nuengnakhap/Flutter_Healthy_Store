@@ -181,8 +181,7 @@ class _ProductCardState extends State<ProductCard> {
                         _favoriteBloc.removeProductofFav(widget.product);
                         widget.checked = false;
                       }
-                      setState(() { 
-                      });
+                      setState(() {});
                     },
                   ),
                 ],

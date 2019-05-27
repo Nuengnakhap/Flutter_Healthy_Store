@@ -1,9 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
+import 'package:store_app_proj/userScreens/delivery.dart';
+
+import 'app_db.dart';
 
 CameraPosition defaultLocation =
     CameraPosition(target: LatLng(13.730801, 100.781775), zoom: 15);
@@ -30,10 +35,36 @@ class _AddressPickerState extends State<AddressPicker> {
   TextEditingController province = TextEditingController();
   TextEditingController district = TextEditingController();
   TextEditingController zipCode = TextEditingController();
+  Client _client;
+  String acctName = 'Guest';
+  String acctEmail = '';
+  String acctPhotoUrl = '';
+  bool isLoggedIn = false;
+  String adminId;
+  String userId = '';
+
+  Future _asyncMethod() async {
+    _client = await DBProvider(dbName: 'Client').getLasted();
+    if (_client != null) {
+      acctName = _client.fullName;
+      acctEmail = _client.email;
+      acctPhotoUrl = _client.photo;
+      isLoggedIn = _client.logged;
+      userId = _client.userUID;
+    } else {
+      acctName = 'Guest';
+      acctEmail = '';
+      acctPhotoUrl = '';
+      isLoggedIn = false;
+      userId = '';
+    }
+    setState(() {});
+  }
 
   @override
   void initState() {
     super.initState();
+    _asyncMethod();
     if (widget.location != null) {
       addressName.text = widget.location.data["addressname"];
       fullName.text = widget.location.data["fullname"];
@@ -182,8 +213,10 @@ class _AddressPickerState extends State<AddressPicker> {
                             longitude: _markers.elementAt(0).position.longitude,
                           );
                         }
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.of(context).pushReplacement(
+                            CupertinoPageRoute(builder: (BuildContext context) {
+                          return Delivery(userId: userId);
+                        }));
                       }
                     },
                   )

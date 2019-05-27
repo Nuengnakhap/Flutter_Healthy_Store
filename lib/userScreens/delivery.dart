@@ -6,6 +6,7 @@ import 'package:store_app_proj/tools/address_picker.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
+import 'package:store_app_proj/userScreens/HomeScreen.dart';
 
 class Delivery extends StatefulWidget {
   final String userId;
@@ -22,8 +23,19 @@ class _DeliveryState extends State<Delivery> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Delivery Address'),
+        automaticallyImplyLeading: false,
         centerTitle: false,
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return HomeScreen();
+                },
+              ));
+            },
+          ),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {

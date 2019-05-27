@@ -198,12 +198,8 @@ class _OrderHistoryState extends State<OrderHistory> {
                                                   Container(
                                                     margin: EdgeInsets.only(
                                                         top: 3.0),
-                                                    child: Text("\$${
-                                                      snapshot
-                                                          .data
-                                                          .documents[index]
-                                                          .data['total_price']
-                                                          .toString()}",
+                                                    child: Text(
+                                                      "\$${snapshot.data.documents[index].data['total_price'].toString()}",
                                                       style: TextStyle(
                                                           fontSize: 15.0,
                                                           color:
