@@ -15,3 +15,14 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.io/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
 "# Flutter_Healthy_Store" 
+
+## Setting Projects
+- add new <b>"google-services.json"</b> in android > app
+- add new <b>google map api key</b> in android > app > src > main > AndroidManifest.xml
+
+## Application details
+- Home Screen
+<details>
+  <summary>View UI</summary>
+  ![image](images_github/home1.png)
+</details>
