@@ -1,6 +1,6 @@
-# store_app_proj
+# Flutter Healthy Store
 
-A new Flutter project.
+A new Flutter project about healthy store use api form walmart store.
 
 ## Getting Started
 
