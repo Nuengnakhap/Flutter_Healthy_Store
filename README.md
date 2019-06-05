@@ -24,5 +24,6 @@ samples, guidance on mobile development, and a full API reference.
 - Home Screen
 <details>
   <summary>View UI</summary>
-  ![image](images_github/home1.png)
+  ![alt text](/images_github/home1.png)
 </details>
+![alt text](/images_github/home1.png)
