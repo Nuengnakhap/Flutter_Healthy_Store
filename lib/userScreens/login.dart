@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_app_proj/tools/favorite_bloc.dart';
 import '../tools/app_tools.dart';
 import 'signup.dart';
 import '../tools/app_methods.dart';
@@ -16,6 +17,7 @@ class _LoginState extends State<Login> {
   final scaffoldkey = GlobalKey<ScaffoldState>();
 
   AppMethods appMethod = FirebaseMethods();
+  FavoriteBloc _favoriteBloc = FavoriteBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +89,7 @@ class _LoginState extends State<Login> {
         await appMethod.loginUser(email: email.text, password: password.text);
     if (response == successful) {
       closeProgressDialog(context);
+      _favoriteBloc.clearFavorite();
       Navigator.pop(context, true);
       // Navigator.pop(context);
     } else {

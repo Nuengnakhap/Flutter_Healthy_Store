@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'dart:math';
@@ -13,7 +10,12 @@ import 'package:store_app_proj/userScreens/item_details.dart';
 class ProductCard extends StatefulWidget {
   Store product;
   bool checked = false;
-  ProductCard({Key key, @required this.product, @required this.checked})
+  bool isLoggedIn;
+  ProductCard(
+      {Key key,
+      @required this.product,
+      @required this.checked,
+      @required this.isLoggedIn})
       : super(key: key);
 
   @override
@@ -148,47 +150,56 @@ class _ProductCardState extends State<ProductCard> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              width: 160.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "\$${widget.product.itemPrice.toString()}",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0),
-                  ),
-                  IconButton(
-                    icon: !widget.checked
-                        ? Icon(
-                            Icons.favorite_border,
-                            color: Colors.teal,
-                            // size: 16.0,
-                          )
-                        : Icon(
-                            Icons.favorite,
-                            color: Colors.teal,
-                            // size: 16.0,
-                          ),
-                    onPressed: () {
-                      if (!widget.checked) {
-                        _favoriteBloc.addProductToFavorite(widget.product);
-                        widget.checked = true;
-                      } else {
-                        _favoriteBloc.removeProductofFav(widget.product);
-                        widget.checked = false;
-                      }
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-            )
+            favoriteButton(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget favoriteButton() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      width: 160.0,
+      child: Row(
+        mainAxisAlignment: widget.isLoggedIn
+            ? MainAxisAlignment.spaceBetween
+            : MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "\$${widget.product.itemPrice.toString()}",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20.0,
+            ),
+          ),
+          widget.isLoggedIn
+              ? IconButton(
+                  icon: !widget.checked
+                      ? Icon(
+                          Icons.favorite_border,
+                          color: Colors.teal,
+                          // size: 16.0,
+                        )
+                      : Icon(
+                          Icons.favorite,
+                          color: Colors.teal,
+                          // size: 16.0,
+                        ),
+                  onPressed: () {
+                    if (!widget.checked) {
+                      _favoriteBloc.addProductToFavorite(widget.product);
+                      widget.checked = true;
+                    } else {
+                      _favoriteBloc.removeProductofFav(widget.product);
+                      widget.checked = false;
+                    }
+                    setState(() {});
+                  },
+                )
+              : Container(),
+        ],
       ),
     );
   }

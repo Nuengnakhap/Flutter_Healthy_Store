@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../tools/progressdialog.dart';
-import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'app_data.dart';
 
 Widget appTextField(
     {IconData textIcon,
@@ -150,4 +146,3 @@ Future<String> readData() async {
     return '';
   }
 }
-

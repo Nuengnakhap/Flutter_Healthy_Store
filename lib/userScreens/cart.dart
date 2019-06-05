@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/order_card.dart';
 import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
-import 'dart:math';
 
 import 'package:store_app_proj/userScreens/credit_card.dart';
 
@@ -72,7 +71,10 @@ class _CartScreenState extends State<CartScreen> {
                       padding: const EdgeInsets.all(5.0),
                       child: new GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => CreditCardPage()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreditCardPage()));
                         },
                         child: new Container(
                           width: double.infinity,

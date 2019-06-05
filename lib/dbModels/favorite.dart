@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
-import 'package:store_app_proj/dbModels/client.dart';
 import 'package:store_app_proj/tools/app_data.dart';
-import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 

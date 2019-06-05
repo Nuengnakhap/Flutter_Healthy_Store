@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:store_app_proj/tools/app_data.dart' as prefix0;
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
@@ -35,49 +34,6 @@ class _OrderHistoryState extends State<OrderHistory> {
   bool checkboxValueA = true;
   bool checkboxValueB = false;
   bool checkboxValueC = false;
-
-  List<Item> itemList = <Item>[
-    Item(
-        name: 'Jhone Miller',
-        deliveryTime: '26-5-2106',
-        oderId: '#CN23656',
-        oderAmount: '\₹ 650',
-        paymentType: 'online',
-        address: '1338 Karen Lane,Louisville,Kentucky',
-        cancelOder: 'Cancel Order'),
-    Item(
-        name: 'Gautam Dass',
-        deliveryTime: '10-8-2106',
-        oderId: '#CN33568',
-        oderAmount: '\₹ 900',
-        paymentType: 'COD',
-        address: '319 Alexander Drive,Ponder,Texas',
-        cancelOder: 'View Receipt'),
-    Item(
-        name: 'Jhone Hill',
-        deliveryTime: '23-3-2107',
-        oderId: '#CN75695',
-        oderAmount: '\₹ 250',
-        paymentType: 'online',
-        address: '92 Jarvis Street,Buffalo,New York',
-        cancelOder: 'View Receipt'),
-    Item(
-        name: 'Miller Root',
-        deliveryTime: '10-5-2107',
-        oderId: '#CN45238',
-        oderAmount: '\₹ 500',
-        paymentType: 'Bhim/upi',
-        address: '103 Romrog Way,Grand Island,Nebraska',
-        cancelOder: 'Cancel Order'),
-    Item(
-        name: 'Lag Gilli',
-        deliveryTime: '26-10-2107',
-        oderId: '#CN69532',
-        oderAmount: '\₹ 1120',
-        paymentType: 'online',
-        address: '8 Clarksburg Park,Marble Canyon,Arizona',
-        cancelOder: 'View Receipt'),
-  ];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -246,10 +202,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             size: 20.0,
                                             color: Colors.amber.shade500,
                                           ),
-                                          Text(itemList[index].address,
-                                              style: TextStyle(
-                                                  fontSize: 13.0,
-                                                  color: Colors.black54)),
+                                          Text(""),
                                         ],
                                       ),
                                       Divider(

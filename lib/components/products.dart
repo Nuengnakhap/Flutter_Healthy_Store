@@ -7,7 +7,8 @@ import 'package:store_app_proj/tools/favorite_bloc.dart';
 
 class ListProduct extends StatefulWidget {
   List<Store> items;
-  ListProduct({Key key, this.items}) : super(key: key);
+  bool isLoggedIn;
+  ListProduct({Key key, this.items, this.isLoggedIn}) : super(key: key);
 
   @override
   ListProductState createState() => ListProductState();
@@ -28,6 +29,7 @@ class ListProductState extends State<ListProduct> {
               Card(
                 child: MostRating(
                   items: items,
+                  isLoggedIn: widget.isLoggedIn,
                 ),
               ),
               Card(
@@ -58,21 +60,10 @@ class ListProductState extends State<ListProduct> {
             // itemCount: items.length,
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                // bool checked = false;
+                bool checked = false;
                 for (var item in _favoriteBloc.currentFavorite.products) {
                   if (item.itemName == items.elementAt(index).itemName) {
-                    return Card(
-                      child: ProductCard(
-                        product: Store.items(
-                          itemName: items.elementAt(index).itemName,
-                          itemImage: items.elementAt(index).itemImage,
-                          itemPrice: items.elementAt(index).itemPrice,
-                          itemRating: items.elementAt(index).itemRating,
-                          itemDesc: items.elementAt(index).itemDesc,
-                        ),
-                        checked: true,
-                      ),
-                    );
+                    checked = true;
                   }
                 }
                 return Card(
@@ -84,7 +75,8 @@ class ListProductState extends State<ListProduct> {
                       itemRating: items.elementAt(index).itemRating,
                       itemDesc: items.elementAt(index).itemDesc,
                     ),
-                    checked: false,
+                    checked: checked,
+                    isLoggedIn: widget.isLoggedIn,
                   ),
                 );
               },

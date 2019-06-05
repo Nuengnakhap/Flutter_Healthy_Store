@@ -1,18 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/components/shopping_cart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
-import 'package:store_app_proj/dbModels/client.dart';
-import 'package:store_app_proj/dbModels/order.dart';
-import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
 import 'package:store_app_proj/tools/favorite_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
-import 'package:store_app_proj/userScreens/cart.dart';
-import 'package:store_app_proj/userScreens/favorites.dart';
-import 'package:store_app_proj/userScreens/login.dart';
 
 class ItemDetail extends StatefulWidget {
   Store product;

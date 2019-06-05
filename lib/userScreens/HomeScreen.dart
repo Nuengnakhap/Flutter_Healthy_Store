@@ -10,6 +10,7 @@ import 'package:store_app_proj/dbModels/order.dart';
 import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/cart_bloc.dart';
+import 'package:store_app_proj/tools/favorite_bloc.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/tools/progressdialog.dart';
 import 'package:store_app_proj/userScreens/order_history.dart';
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   AppMethods appMethod = FirebaseMethods();
 
   CartBloc _cartBloc = CartBloc();
+  FavoriteBloc _favoriteBloc = FavoriteBloc();
 
   StreamController _productController;
 
@@ -84,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future fetchProduct() async {
     final response =
-        await http.get('http://onezlinks.com:8090/files/product.json');
+        await http.get('http://nuengnakhap.5gbfree.com/product.json');
+
     try {
       if (response.statusCode == 200) {
         Map<String, dynamic> data = json.decode(response.body);
@@ -229,7 +232,10 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           if (snapshot.hasData) {
-            return ListProduct(items: snapshot.data);
+            return ListProduct(
+              items: snapshot.data,
+              isLoggedIn: isLoggedIn,
+            );
           } else {
             return Center(child: ProgressDialog());
           }
@@ -371,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response == true) {
       _asyncMethod();
       _cartBloc.clearCart();
+      _favoriteBloc.clearFavorite();
     }
     Navigator.pop(context);
   }

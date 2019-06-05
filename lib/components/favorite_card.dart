@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
 import 'dart:math';
@@ -12,8 +9,7 @@ import 'package:store_app_proj/userScreens/item_details.dart';
 
 class FavoriteCard extends StatefulWidget {
   Store product;
-  FavoriteCard({Key key, @required this.product})
-      : super(key: key);
+  FavoriteCard({Key key, @required this.product}) : super(key: key);
 
   @override
   _FavoriteCardState createState() => _FavoriteCardState();
@@ -162,10 +158,10 @@ class _FavoriteCardState extends State<FavoriteCard> {
                   ),
                   IconButton(
                     icon: Icon(
-                            Icons.favorite,
-                            color: Colors.teal,
-                            // size: 16.0,
-                          ),
+                      Icons.favorite,
+                      color: Colors.teal,
+                      // size: 16.0,
+                    ),
                     onPressed: () {
                       _favoriteBloc.removeProductofFav(widget.product);
                     },

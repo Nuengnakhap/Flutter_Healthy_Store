@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:store_app_proj/tools/address_picker.dart';
-import 'package:store_app_proj/tools/app_db.dart';
-import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 import 'package:store_app_proj/userScreens/HomeScreen.dart';
 

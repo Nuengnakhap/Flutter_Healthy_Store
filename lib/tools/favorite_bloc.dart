@@ -1,9 +1,6 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:store_app_proj/dbModels/Store.dart';
-import 'package:store_app_proj/dbModels/cart.dart';
 import 'package:store_app_proj/dbModels/favorite.dart';
-import 'package:store_app_proj/dbModels/order.dart';
-import 'package:store_app_proj/tools/app_db.dart';
 import 'package:store_app_proj/tools/app_methods.dart';
 import 'package:store_app_proj/tools/firebase_methods.dart';
 
@@ -40,12 +37,11 @@ class FavoriteBloc {
 
   void addProductToFavorite(Store product) async {
     _lastProduct = Store.items(
-      itemName: product.itemName,
-      itemImage: product.itemImage,
-      itemPrice: product.itemPrice,
-      itemDesc: product.itemDesc,
-      itemRating: product.itemRating
-    );
+        itemName: product.itemName,
+        itemImage: product.itemImage,
+        itemPrice: product.itemPrice,
+        itemDesc: product.itemDesc,
+        itemRating: product.itemRating);
     _currentFavorite.addProduct(_lastProduct);
 
     _updateLastProduct();
